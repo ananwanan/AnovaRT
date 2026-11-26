@@ -1,0 +1,14 @@
+name: Progress validation
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  progress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate milestone records
+        run: python3 scripts/check_progress.py
