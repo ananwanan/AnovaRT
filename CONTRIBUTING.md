@@ -1,3 +1,3 @@
-# 贡献指南
+# Contributing
 
-欢迎个人和商业贡献。先提交 Issue 说明需求、设计与验收；从 dev（创建后）建立 feat/mN-topic 分支。遵循 AGENTS.md 与测试规范，提交清晰 PR，注明第三方代码及许可。提交贡献默认按 Apache-2.0 第 5 条处理；贡献者应有权提交。商业使用无需付费或另行授权。
+Personal and commercial contributions are welcome. Open an issue describing requirements, design and acceptance criteria. Branch from dev using feat/mN-topic. Follow AGENTS.md and TESTING.md, submit clear pull requests and identify third-party code and licenses. Contributions are handled under Section 5 of Apache-2.0 unless explicitly stated otherwise; contributors must have the rights to submit them. Commercial use requires no additional paid license.

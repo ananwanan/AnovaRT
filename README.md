@@ -1,24 +1,33 @@
 # AnovaRT
 
-A Rust-first, open-source embedded RTOS, independent of AnovaOS.
+**English | [简体中文](README.zh-CN.md)**
 
-面向微控制器的自研 Rust 实时操作系统。首个目标：STM32F103ZET6（Cortex-M3，512 KiB Flash，64 KiB SRAM）。
+A Rust-first, open-source embedded real-time operating system (RTOS), independent of AnovaOS.
 
-## 状态
-独立 LED 裸机 Demo 已由维护者确认可运行，尚未集成本仓库。当前没有可发布的 RTOS 固件。
+## Goals
+- Self-developed, modular preemptive real-time kernel and register-level drivers.
+- Portable architecture, chip and board support layers.
+- First target: STM32F103ZET6 (Cortex-M3, 512 KiB Flash, 64 KiB SRAM).
+- Optional storage, shell, graphics and application SDKs.
 
-## 文档
-- [路线图](docs/ROADMAP.md)
-- [进度追踪](docs/PROGRESS.md)
-- [架构](docs/ARCHITECTURE.md)
-- [开发指南](docs/DEVELOPMENT.md)
-- [测试规范](docs/TESTING.md)
-- [板级资料](docs/boards/stm32f103ze.md)
-- [AI 开发规范](AGENTS.md)
-- [贡献指南](CONTRIBUTING.md)
-- [安全政策](SECURITY.md)
+## Status
+The maintainer has confirmed that a standalone bare-metal LED demo runs on hardware. It has not been integrated into this repository. No RTOS firmware is available for release yet.
 
-运行 `python scripts/check_progress.py` 检查进度记录。
+## Documentation
+- [Roadmap](docs/ROADMAP.md)
+- [Progress](docs/PROGRESS.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Development](docs/DEVELOPMENT.md)
+- [Testing and acceptance](docs/TESTING.md)
+- [Board support](docs/boards/stm32f103ze.md)
+- [Agent instructions](AGENTS.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
 
-## 授权
-[Apache License 2.0](LICENSE)：个人和商业用途均免费，无需另行付费授权；使用、修改、分发应遵循许可证及 NOTICE 要求。第三方材料保留原许可。商标权不随软件授权转让。
+Run `python scripts/check_progress.py` to validate milestone records.
+
+## Branches
+Development takes place on dev; main is reserved for stable releases. Feature branches start from dev.
+
+## License
+[Apache License 2.0](LICENSE). Personal and commercial use are royalty-free under its terms. Retain applicable copyright, license and NOTICE information. Third-party materials retain their respective licenses.

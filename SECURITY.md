@@ -1,3 +1,3 @@
 # Security policy
 
-当前尚无正式版本，不承诺安全支持或功能安全认证。安全问题优先通过 GitHub 私密漏洞报告（若仓库已启用）或维护者私下沟通；不要在公开 Issue 发布可利用细节或机密。报告版本、影响、复现与修复建议。软件按 Apache-2.0 提供，无保证。
+There is no formal release yet, and no security support or functional-safety certification is promised. Report security issues through GitHub private vulnerability reporting if enabled, or contact the maintainer privately. Do not publish exploitable details or confidential information in public issues. Include version, impact, reproduction and proposed fixes. Software is provided under Apache-2.0 without warranty.

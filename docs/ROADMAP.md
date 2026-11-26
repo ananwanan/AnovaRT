@@ -1,31 +1,31 @@
-# 开发路线图
+# Development roadmap
 
-目标：独立于 AnovaOS 的 Cortex-M 实时内核。M0–M7 最小 RTOS；M8–M13 设备；M14–M18 系统服务；M19–M22 SDK 与移植。
+An independent Cortex-M real-time kernel. M0–M7: minimum RTOS; M8–M13: devices; M14–M18: services; M19–M22: SDK and portability.
 
-| ID | 里程碑 | 依赖 | 实现与验收 |
+| ID | Milestone | Dependencies | Implementation and acceptance |
 |---|---|---|---|
-| M0 | 裸机启动 | 无 | workspace、链接脚本、向量表、Reset、LED；仓库固件实机闪烁 |
-| M1 | 时钟与日志 | M0 | HSI/HSE/PLL、UART、panic；验证时钟、波特率、回退 |
-| M2 | 中断与异常 | M1 | NVIC、SysTick、异常现场；验证优先级及异常 |
-| M3 | 内存管理 | M2 | 内存池、可选堆、栈水位；验证对齐、耗尽及回收 |
-| M4 | 任务上下文 | M3 | TCB、MSP/PSP、PendSV；验证寄存器与栈完整性 |
-| M5 | 实时调度 | M4 | 固定优先级抢占、同优先级轮转、阻塞/唤醒；测量延迟 |
-| M6 | 同步原语 | M5 | Mutex、Semaphore、Event；竞争、超时及优先级反转 |
-| M7 | IPC 与定时器 | M6 | 有界队列、软件定时器；满队列、取消及 tick 回绕 |
-| M8 | 设备模型 | M7 | 设备注册、能力接口、生命周期；资源冲突测试 |
-| M9 | 基础外设 | M8 | GPIO、按键、EXTI、ADC、PWM、蜂鸣器；实机验证 |
-| M10 | 总线与 DMA | M9 | SPI、I2C、DMA；超时、错误、缓冲区生命周期 |
-| M11 | LCD 与触摸 | M10 | 确认控制器、局部绘制、校准；纯色/字符/坐标实测 |
-| M12 | 存储设备 | M11 | SPI NOR、EEPROM、SD；读写校验、容量与掉电风险 |
-| M13 | 通信外设 | M12 | USB Device、CAN、RS485；枚举、收发、恢复 |
-| M14 | 文件系统 | M13 | VFS、FAT32、可选 LittleFS；挂载、读写、满盘、损坏介质 |
-| M15 | Shell | M14 | 命令注册、UART 交互；输入边界及错误处理 |
-| M16 | 资源监控 | M15 | 任务、栈水位、CPU/RAM；对照测量 |
-| M17 | 图形渲染 | M16 | RGB565、字体、裁剪、局部刷新；测量 RAM 和延迟 |
-| M18 | GUI 与应用 | M17 | 事件循环、控件、静态应用管理；触摸与调度共存 |
-| M19 | Rust SDK | M18 | API、示例、版本策略；独立构建 |
-| M20 | C/C++ SDK | M19 | C ABI、头文件、工具链；跨语言调用 |
-| M21 | 可加载应用 | M20 | 论证重定位、ABI、内存、安全边界；可行才实现并验收 |
-| M22 | 跨平台 | M21 | 第二块板适配；验证共享内核无 STM32 耦合 |
+| M0 | Bare-metal bootstrap | None | Workspace, linker script, vector table, reset handler and LED; demonstrate repository firmware blinking on hardware. |
+| M1 | Clock and logging | M0 | HSI/HSE/PLL, UART and panic logging; verify clock frequency, baud rate and fallback. |
+| M2 | Interrupts and exceptions | M1 | NVIC, SysTick and exception context; verify priorities and fault reporting. |
+| M3 | Memory management | M2 | Memory pools, optional heap and stack watermark; verify alignment, exhaustion and reclamation. |
+| M4 | Task context | M3 | TCB, MSP/PSP and PendSV; verify register preservation and stack integrity. |
+| M5 | Real-time scheduling | M4 | Fixed-priority preemption, equal-priority round robin, blocking and waking; measure latency. |
+| M6 | Synchronization | M5 | Mutexes, semaphores and events; test contention, timeouts and priority inversion. |
+| M7 | IPC and timers | M6 | Bounded queues and software timers; test full queues, cancellation and tick wraparound. |
+| M8 | Device model | M7 | Registration, capability interfaces and lifecycle; test resource conflicts. |
+| M9 | Basic peripherals | M8 | GPIO, buttons, EXTI, ADC, PWM and buzzer; verify on hardware. |
+| M10 | Buses and DMA | M9 | SPI, I2C and DMA; test timeouts, errors and buffer lifetimes. |
+| M11 | LCD and touch | M10 | Identify controllers, implement partial drawing and calibration; verify solid colors, text and coordinates. |
+| M12 | Storage devices | M11 | SPI NOR, EEPROM and SD; verify read/write integrity, capacity and power-loss risks. |
+| M13 | Communications | M12 | USB Device, CAN and RS485; verify enumeration where applicable, transmission, reception and recovery. |
+| M14 | File systems | M13 | VFS, FAT32 and optional LittleFS; test mounting, reads/writes, full and damaged media. |
+| M15 | Shell | M14 | Command registration and UART interaction; test input boundaries and error handling. |
+| M16 | Resource monitoring | M15 | Tasks, stack watermarks, CPU and RAM statistics; compare with measurements. |
+| M17 | Graphics rendering | M16 | RGB565, fonts, clipping and partial refresh; measure RAM usage and latency. |
+| M18 | GUI and applications | M17 | Event loop, widgets and static application management; verify touch and scheduling coexistence. |
+| M19 | Rust SDK | M18 | Public APIs, examples and version policy; verify standalone application builds. |
+| M20 | C/C++ SDK | M19 | C ABI, headers and toolchain; verify cross-language calls. |
+| M21 | Loadable applications | M20 | Assess relocation, ABI, memory and security boundaries; implement and validate only if feasible. |
+| M22 | Platform portability | M21 | Port to a second board; demonstrate shared kernel independence from STM32 registers. |
 
-依赖为初始保守验收顺序，可通过架构决策调整，独立驱动可并行实验。M21 为可行性门控，不承诺 MCU 进程级隔离。
+Dependencies define a conservative initial acceptance order; revise through architectural decisions. Independent driver experiments may proceed in parallel. M21 is a feasibility gate, not a promise of MCU process isolation.

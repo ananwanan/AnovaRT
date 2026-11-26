@@ -3,150 +3,150 @@
   "milestones": [
     {
       "id": "M0",
-      "title": "裸机启动",
+      "title": "Bare-metal bootstrap",
       "depends_on": [],
       "status": "planned",
-      "acceptance": "workspace、链接脚本、向量表、Reset、LED；仓库固件实机闪烁",
+      "acceptance": "Workspace, linker script, vector table, reset handler and LED; demonstrate repository firmware blinking on hardware.",
       "evidence": []
     },
     {
       "id": "M1",
-      "title": "时钟与日志",
+      "title": "Clock and logging",
       "depends_on": [
         "M0"
       ],
       "status": "planned",
-      "acceptance": "HSI/HSE/PLL、UART、panic；验证时钟、波特率、回退",
+      "acceptance": "HSI/HSE/PLL, UART and panic logging; verify clock frequency, baud rate and fallback.",
       "evidence": []
     },
     {
       "id": "M2",
-      "title": "中断与异常",
+      "title": "Interrupts and exceptions",
       "depends_on": [
         "M1"
       ],
       "status": "planned",
-      "acceptance": "NVIC、SysTick、异常现场；验证优先级及异常",
+      "acceptance": "NVIC, SysTick and exception context; verify priorities and fault reporting.",
       "evidence": []
     },
     {
       "id": "M3",
-      "title": "内存管理",
+      "title": "Memory management",
       "depends_on": [
         "M2"
       ],
       "status": "planned",
-      "acceptance": "内存池、可选堆、栈水位；验证对齐、耗尽及回收",
+      "acceptance": "Memory pools, optional heap and stack watermark; verify alignment, exhaustion and reclamation.",
       "evidence": []
     },
     {
       "id": "M4",
-      "title": "任务上下文",
+      "title": "Task context",
       "depends_on": [
         "M3"
       ],
       "status": "planned",
-      "acceptance": "TCB、MSP/PSP、PendSV；验证寄存器与栈完整性",
+      "acceptance": "TCB, MSP/PSP and PendSV; verify register preservation and stack integrity.",
       "evidence": []
     },
     {
       "id": "M5",
-      "title": "实时调度",
+      "title": "Real-time scheduling",
       "depends_on": [
         "M4"
       ],
       "status": "planned",
-      "acceptance": "固定优先级抢占、同优先级轮转、阻塞/唤醒；测量延迟",
+      "acceptance": "Fixed-priority preemption, equal-priority round robin, blocking and waking; measure latency.",
       "evidence": []
     },
     {
       "id": "M6",
-      "title": "同步原语",
+      "title": "Synchronization",
       "depends_on": [
         "M5"
       ],
       "status": "planned",
-      "acceptance": "Mutex、Semaphore、Event；竞争、超时及优先级反转",
+      "acceptance": "Mutexes, semaphores and events; test contention, timeouts and priority inversion.",
       "evidence": []
     },
     {
       "id": "M7",
-      "title": "IPC 与定时器",
+      "title": "IPC and timers",
       "depends_on": [
         "M6"
       ],
       "status": "planned",
-      "acceptance": "有界队列、软件定时器；满队列、取消及 tick 回绕",
+      "acceptance": "Bounded queues and software timers; test full queues, cancellation and tick wraparound.",
       "evidence": []
     },
     {
       "id": "M8",
-      "title": "设备模型",
+      "title": "Device model",
       "depends_on": [
         "M7"
       ],
       "status": "planned",
-      "acceptance": "设备注册、能力接口、生命周期；资源冲突测试",
+      "acceptance": "Registration, capability interfaces and lifecycle; test resource conflicts.",
       "evidence": []
     },
     {
       "id": "M9",
-      "title": "基础外设",
+      "title": "Basic peripherals",
       "depends_on": [
         "M8"
       ],
       "status": "planned",
-      "acceptance": "GPIO、按键、EXTI、ADC、PWM、蜂鸣器；实机验证",
+      "acceptance": "GPIO, buttons, EXTI, ADC, PWM and buzzer; verify on hardware.",
       "evidence": []
     },
     {
       "id": "M10",
-      "title": "总线与 DMA",
+      "title": "Buses and DMA",
       "depends_on": [
         "M9"
       ],
       "status": "planned",
-      "acceptance": "SPI、I2C、DMA；超时、错误、缓冲区生命周期",
+      "acceptance": "SPI, I2C and DMA; test timeouts, errors and buffer lifetimes.",
       "evidence": []
     },
     {
       "id": "M11",
-      "title": "LCD 与触摸",
+      "title": "LCD and touch",
       "depends_on": [
         "M10"
       ],
       "status": "planned",
-      "acceptance": "确认控制器、局部绘制、校准；纯色/字符/坐标实测",
+      "acceptance": "Identify controllers, implement partial drawing and calibration; verify solid colors, text and coordinates.",
       "evidence": []
     },
     {
       "id": "M12",
-      "title": "存储设备",
+      "title": "Storage devices",
       "depends_on": [
         "M11"
       ],
       "status": "planned",
-      "acceptance": "SPI NOR、EEPROM、SD；读写校验、容量与掉电风险",
+      "acceptance": "SPI NOR, EEPROM and SD; verify read/write integrity, capacity and power-loss risks.",
       "evidence": []
     },
     {
       "id": "M13",
-      "title": "通信外设",
+      "title": "Communications",
       "depends_on": [
         "M12"
       ],
       "status": "planned",
-      "acceptance": "USB Device、CAN、RS485；枚举、收发、恢复",
+      "acceptance": "USB Device, CAN and RS485; verify enumeration where applicable, transmission, reception and recovery.",
       "evidence": []
     },
     {
       "id": "M14",
-      "title": "文件系统",
+      "title": "File systems",
       "depends_on": [
         "M13"
       ],
       "status": "planned",
-      "acceptance": "VFS、FAT32、可选 LittleFS；挂载、读写、满盘、损坏介质",
+      "acceptance": "VFS, FAT32 and optional LittleFS; test mounting, reads/writes, full and damaged media.",
       "evidence": []
     },
     {
@@ -156,37 +156,37 @@
         "M14"
       ],
       "status": "planned",
-      "acceptance": "命令注册、UART 交互；输入边界及错误处理",
+      "acceptance": "Command registration and UART interaction; test input boundaries and error handling.",
       "evidence": []
     },
     {
       "id": "M16",
-      "title": "资源监控",
+      "title": "Resource monitoring",
       "depends_on": [
         "M15"
       ],
       "status": "planned",
-      "acceptance": "任务、栈水位、CPU/RAM；对照测量",
+      "acceptance": "Tasks, stack watermarks, CPU and RAM statistics; compare with measurements.",
       "evidence": []
     },
     {
       "id": "M17",
-      "title": "图形渲染",
+      "title": "Graphics rendering",
       "depends_on": [
         "M16"
       ],
       "status": "planned",
-      "acceptance": "RGB565、字体、裁剪、局部刷新；测量 RAM 和延迟",
+      "acceptance": "RGB565, fonts, clipping and partial refresh; measure RAM usage and latency.",
       "evidence": []
     },
     {
       "id": "M18",
-      "title": "GUI 与应用",
+      "title": "GUI and applications",
       "depends_on": [
         "M17"
       ],
       "status": "planned",
-      "acceptance": "事件循环、控件、静态应用管理；触摸与调度共存",
+      "acceptance": "Event loop, widgets and static application management; verify touch and scheduling coexistence.",
       "evidence": []
     },
     {
@@ -196,7 +196,7 @@
         "M18"
       ],
       "status": "planned",
-      "acceptance": "API、示例、版本策略；独立构建",
+      "acceptance": "Public APIs, examples and version policy; verify standalone application builds.",
       "evidence": []
     },
     {
@@ -206,27 +206,27 @@
         "M19"
       ],
       "status": "planned",
-      "acceptance": "C ABI、头文件、工具链；跨语言调用",
+      "acceptance": "C ABI, headers and toolchain; verify cross-language calls.",
       "evidence": []
     },
     {
       "id": "M21",
-      "title": "可加载应用",
+      "title": "Loadable applications",
       "depends_on": [
         "M20"
       ],
       "status": "planned",
-      "acceptance": "论证重定位、ABI、内存、安全边界；可行才实现并验收",
+      "acceptance": "Assess relocation, ABI, memory and security boundaries; implement and validate only if feasible.",
       "evidence": []
     },
     {
       "id": "M22",
-      "title": "跨平台",
+      "title": "Platform portability",
       "depends_on": [
         "M21"
       ],
       "status": "planned",
-      "acceptance": "第二块板适配；验证共享内核无 STM32 耦合",
+      "acceptance": "Port to a second board; demonstrate shared kernel independence from STM32 registers.",
       "evidence": []
     }
   ]

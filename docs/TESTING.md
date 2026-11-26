@@ -1,7 +1,7 @@
-# 测试与验收
+# Testing and acceptance
 
-分层：宿主纯逻辑单测；thumbv7m-none-eabi 交叉构建；实机 SWD/串口/GPIO；必要时逻辑分析仪测时序。QEMU 可辅助但不可替代板级验证。
+Layers: host unit tests for portable logic; thumbv7m-none-eabi cross-builds; hardware SWD, UART and GPIO verification; logic analyzer for timing when needed. QEMU is supplemental, not a substitute for board verification.
 
-记录提交 SHA、日期、工具版本、板卡、命令、退出码、预期和实际结果、证据路径或 URL、未执行项。记录到 docs/validation/Mn-YYYY-MM-DD.md；progress.json 的 evidence 项含 commit、environment、result（pass）、artifact。所有验收点均通过才标 done；无设备时标 implemented 或 blocked，不伪造。
+Record commit SHA, date, tool versions, board, command, exit code, expected and actual results, evidence path or URL and tests not run. Store records in docs/validation/Mn-YYYY-MM-DD.md. Each evidence item in progress.json contains commit, environment, result (pass) and artifact. Mark done only when all acceptance points pass. Without hardware, use implemented or blocked rather than fabricated evidence.
 
-调度验收包含寄存器保留、栈边界、抢占顺序、并发、超时、tick 回绕、ISR 延迟和上下文切换测量。报告测量条件及最大值，不用平均值声称硬实时。内存验收检查链接 map、栈水位、OOM、越界及碎片。驱动包含错误路径、超时与重试上限；存储测试使用已备份的测试介质。
+Scheduling tests cover preserved registers, stack boundaries, preemption order, concurrency, timeouts, tick wraparound, ISR latency and context-switch timing. Report measurement conditions and maxima; do not claim hard real-time performance from averages. Memory tests cover linker map, stack watermark, OOM, bounds and fragmentation. Driver tests cover errors, timeouts and bounded retries; use backed-up test media for storage.
