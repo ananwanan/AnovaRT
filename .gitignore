@@ -1,0 +1,7 @@
+/target/
+**/__pycache__/
+*.elf
+*.bin
+*.hex
+*.map
+.vscode/settings.json
