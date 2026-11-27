@@ -4,6 +4,10 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[features]
+default = []
+lcd-cat = []
+
 [[bin]]
 name = "anova-firmware"
 path = "src/main.rs"
