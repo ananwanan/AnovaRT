@@ -20,14 +20,31 @@ extern "C" fn firmware_main() -> ! {
         anova_cortex_m::halt();
     }
 
-    // SAFETY: This entry runs once on the Elite ME V6 with interrupts masked.
-    // It is the sole owner of PB5 and the only writer to RCC/GPIOB.
-    let mut led = unsafe { anova_board::Led::init() };
-    loop {
-        led.set(true);
-        anova_cortex_m::delay_iterations(1_000_000);
-        led.set(false);
-        anova_cortex_m::delay_iterations(1_000_000);
+    #[cfg(feature = "lcd-cat")]
+    {
+        // SAFETY: The operator explicitly selects this experiment only after
+        // verifying the wiring. Reset masks interrupts; the demo owns MMIO.
+        unsafe {
+            anova_board::lcd_cat::run(|ms| {
+                for _ in 0..ms {
+                    anova_cortex_m::delay_iterations(72_000);
+                }
+            });
+        }
+        anova_cortex_m::halt();
+    }
+
+    #[cfg(not(feature = "lcd-cat"))]
+    {
+        // SAFETY: This entry runs once on the Elite ME V6 with interrupts masked.
+        // It is the sole owner of PB5 and the only writer to RCC/GPIOB.
+        let mut led = unsafe { anova_board::Led::init() };
+        loop {
+            led.set(true);
+            anova_cortex_m::delay_iterations(1_000_000);
+            led.set(false);
+            anova_cortex_m::delay_iterations(1_000_000);
+        }
     }
 }
 
