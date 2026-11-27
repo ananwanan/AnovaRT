@@ -2,6 +2,9 @@
 m0-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware"
 m0-run = "run --locked --release --target thumbv7m-none-eabi -p anova-firmware"
 
+lcd-cat-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features lcd-cat"
+lcd-cat-run = "run --locked --release --target thumbv7m-none-eabi -p anova-firmware --features lcd-cat"
+
 [target.thumbv7m-none-eabi]
 runner = [
     "probe-rs",
