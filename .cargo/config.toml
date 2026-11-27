@@ -1,0 +1,13 @@
+[alias]
+m0-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware"
+m0-run = "run --locked --release --target thumbv7m-none-eabi -p anova-firmware"
+
+[target.thumbv7m-none-eabi]
+runner = [
+    "probe-rs",
+    "run",
+    "--chip", "STM32F103ZETx",
+    "--protocol", "swd",
+    "--verify",
+    "--no-catch-reset"
+]

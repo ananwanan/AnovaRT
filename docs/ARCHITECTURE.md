@@ -2,7 +2,7 @@
 
 Applications/SDK → Shell/VFS/GUI → Kernel (task/scheduler/sync/ipc/timer/memory) → Arch/HAL/Drivers → BSP/Hardware.
 
-Planned layout (not implemented):
+M0 workspace and future source locations:
 ```
 arch/cortex-m/       # active: reset, exceptions, context
 # arch/aarch64/      # deferred candidate, not implemented
@@ -11,11 +11,14 @@ hal/stm32f1/         # active chip register layer
 # hal/bcm2711/       # deferred candidate
 bsp/threebluewhale-f103ze/ # active board bindings
 # bsp/raspberry-pi-4b/    # deferred candidate
+firmware/            # active board firmware entry
 drivers/
 components/          # shell, vfs, gui
 sdk/ apps/ tests/ xtask/
 ```
-For the active STM32 target, start with a single core, static linking and a shared address space; no process-level isolation. MSP serves handlers, PSP serves tasks, PendSV switches context, SysTick provides ticks, and SVC provides controlled entry. Implement fixed-priority preemption before considering tickless operation. The architecture layer owns exception frames; the portable kernel must not access specific GPIO addresses.
+M0 uses the Flash boot alias, a single core, static linking and a shared address space. Hardware loads the 8-byte-aligned MSP from the vector table. Reset masks configurable interrupts, copies .data, clears .bss and calls the Rust entry. The entry checks one word from each section before configuring DS0. Thread mode and exception handlers use MSP. Cortex-M3 hardware stacks R0–R3, R12, LR, PC and xPSR on exception entry and places EXC_RETURN in LR. M0 default handlers are terminal. PSP, task switching and exception return handling are future work.
+
+The architecture layer owns core vectors and reset assembly. The chip layer supplies external vectors and GPIO/RCC register access. The BSP supplies the linker memory map and LED binding. The firmware owns the blink loop, which uses an uncalibrated busy wait at the reset clock. The portable kernel crate has no board dependencies.
 
 STM32 resource targets (not measurements): 512 KiB Flash and 64 KiB SRAM. Initial SRAM budget in KiB: static data 8, handler stack 4, task stacks 16, heap 12, graphics buffers 8, device buffers 4, reserve 12. Minimum kernel target: Flash <32 KiB, static RAM <4 KiB excluding application and task stacks. Use partial LCD rendering rather than a full framebuffer. Exclude file systems and GUI from M0–M7.
 

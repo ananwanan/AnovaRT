@@ -4,7 +4,7 @@ AnovaRT is designed for multiple architectures, but the project currently develo
 
 | Board | Architecture / candidate Rust target | Priority | Implementation and validation |
 |---|---|---|---|
-| [Three Blue Whales Elite ME V6 / STM32F103ZET6](stm32f103ze.md) | Cortex-M3 / thumbv7m-none-eabi | Primary, sole active target | Planned repository firmware; standalone LED demo and SWD reported separately. All active hardware acceptance is on this board. |
+| [Three Blue Whales Elite ME V6 / STM32F103ZET6](stm32f103ze.md) | Cortex-M3 / thumbv7m-none-eabi | Primary, sole active target | M0 firmware builds and passed maintainer-reported [hardware acceptance](../validation/M0-2026-11-28.md). |
 | [Raspberry Pi 4 Model B](raspberry-pi-4b.md) | Cortex-A72 / aarch64-unknown-none | Secondary, deferred | Documentation only; not implemented, built, booted or tested. |
 | Other development boards | To be selected | Secondary, deferred | No board selected; no implementation or validation. |
 

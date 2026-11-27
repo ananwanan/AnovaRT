@@ -1,0 +1,16 @@
+[workspace]
+resolver = "3"
+members = ["arch/cortex-m", "hal/stm32f1", "bsp/threebluewhale-f103ze", "kernel", "firmware"]
+default-members = ["kernel"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+
+[profile.release]
+panic = "abort"
+opt-level = "s"
+lto = true
+codegen-units = 1
+debug = 1
