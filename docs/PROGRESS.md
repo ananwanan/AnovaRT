@@ -32,4 +32,6 @@ States: planned, in_progress, blocked, implemented (awaiting acceptance), done. 
 | M21 | Loadable applications | planned |
 | M22 | Platform portability | planned |
 
+Platform scope: all 23 tracked milestones concern the active STM32F103ZET6 track; M22 is a portability design review, not a port. Raspberry Pi 4B and other boards are deferred outside the active milestone count; no implementation, builds, emulator or hardware tests are planned for them in the current phase. See [platform matrix](boards/README.md). No milestone status or evidence has changed as a result of this policy.
+
 Next: M0, create Cargo workspace, startup code, linker script and board LED driver; build and validate on hardware.

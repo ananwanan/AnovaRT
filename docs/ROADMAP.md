@@ -1,6 +1,6 @@
 # Development roadmap
 
-An independent Cortex-M real-time kernel. M0–M7: minimum RTOS; M8–M13: devices; M14–M18: services; M19–M22: SDK and portability.
+An independent Rust-first embedded real-time kernel, initially implemented only for Cortex-M3 / STM32F103ZET6. M0–M7: minimum RTOS; M8–M13: devices; M14–M18: services; M19–M22: SDK and portability.
 
 | ID | Milestone | Dependencies | Implementation and acceptance |
 |---|---|---|---|
@@ -26,6 +26,19 @@ An independent Cortex-M real-time kernel. M0–M7: minimum RTOS; M8–M13: devic
 | M19 | Rust SDK | M18 | Public APIs, examples and version policy; verify standalone application builds. |
 | M20 | C/C++ SDK | M19 | C ABI, headers and toolchain; verify cross-language calls. |
 | M21 | Loadable applications | M20 | Assess relocation, ABI, memory and security boundaries; implement and validate only if feasible. |
-| M22 | Platform portability | M21 | Port to a second board; demonstrate shared kernel independence from STM32 registers. |
+| M22 | Platform portability | M21 | Review architecture/HAL/BSP boundaries and document the second-platform porting contract; verify the active STM32 target where affected. No secondary-platform implementation or testing is required. |
 
 Dependencies define a conservative initial acceptance order; revise through architectural decisions. Independent driver experiments may proceed in parallel. M21 is a feasibility gate, not a promise of MCU process isolation.
+
+## Platform priorities
+
+M0–M22 belong to the active STM32 development track. All hardware-specific acceptance refers to the current STM32F103ZET6 board. Preserve the existing milestone order; do not introduce a second-board dependency into any milestone, CI job or release gate. M22 requires a portability design review and applicable STM32 regression evidence, not a second implementation.
+
+### Deferred platform backlog (not active milestones)
+
+| Candidate | Scope after explicit activation | Current status |
+|---|---|---|
+| Raspberry Pi 4 Model B | AArch64 bare-metal boot, architecture context/exception layer, BCM2711 HAL, BSP, UART, timer and interrupts; reuse portable kernel where practical. | Deferred; no implementation, build, emulator or hardware testing. |
+| Other development boards | Select exact board/SoC, architecture, resource budget, toolchain and board support requirements before planning a port. | Deferred; no selected target or validation. |
+
+The maintainer must explicitly activate a secondary port and approve its own roadmap, dependencies and acceptance criteria before implementation or testing begins. These entries are excluded from active milestone counts. See [platform support policy](boards/README.md).

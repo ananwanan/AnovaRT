@@ -226,7 +226,7 @@
         "M21"
       ],
       "status": "planned",
-      "acceptance": "Port to a second board; demonstrate shared kernel independence from STM32 registers.",
+      "acceptance": "Review architecture/HAL/BSP boundaries and document the second-platform porting contract; verify the active STM32 target where affected. No secondary-platform implementation or testing is required.",
       "evidence": []
     }
   ]
