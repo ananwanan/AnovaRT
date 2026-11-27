@@ -28,3 +28,6 @@ impl Led {
         self.0.set_high(on == DS0_ACTIVE_HIGH);
     }
 }
+
+#[cfg(target_os = "none")]
+pub mod lcd_cat;
