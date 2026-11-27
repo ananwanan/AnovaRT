@@ -1,0 +1,15 @@
+[package]
+name = "anova-firmware"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "anova-firmware"
+path = "src/main.rs"
+test = false
+bench = false
+
+[target.thumbv7m-none-eabi.dependencies]
+anova-cortex-m = { path = "../arch/cortex-m" }
+anova-board = { path = "../bsp/threebluewhale-f103ze" }

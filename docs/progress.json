@@ -5,9 +5,22 @@
       "id": "M0",
       "title": "Bare-metal bootstrap",
       "depends_on": [],
-      "status": "planned",
+      "status": "done",
       "acceptance": "Workspace, linker script, vector table, reset handler and LED; demonstrate repository firmware blinking on hardware.",
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "403d571592fa55f6ebd3d80a855e0bb7b67ca8e7",
+          "environment": "Windows x86_64, Rust 1.100.0, thumbv7m-none-eabi release build from the M0 working tree",
+          "result": "pass",
+          "artifact": "docs/validation/M0-local-2026-11-28.md"
+        },
+        {
+          "commit": "403d571592fa55f6ebd3d80a855e0bb7b67ca8e7",
+          "environment": "Three Blue Whales Elite ME V6, STM32F103ZET6, maintainer-reported hardware acceptance of the M0 working tree",
+          "result": "pass",
+          "artifact": "docs/validation/M0-2026-11-28.md"
+        }
+      ]
     },
     {
       "id": "M1",

@@ -1,0 +1,8 @@
+[package]
+name = "anova-board"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[target.thumbv7m-none-eabi.dependencies]
+anova-stm32f1 = { path = "../../hal/stm32f1" }

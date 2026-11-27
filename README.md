@@ -15,7 +15,7 @@ A Rust-first, open-source embedded real-time operating system (RTOS), independen
 Develop, build, flash, debug and validate only the current STM32 board. Keep portable interfaces extensible, but do not implement, build, emulate or test secondary boards unless the maintainer explicitly activates a port. Secondary targets do not gate milestones, CI or releases.
 
 ## Status
-The maintainer has confirmed that a standalone bare-metal LED demo runs on hardware. It has not been integrated into this repository. No RTOS firmware is available for release yet.
+The M0 bare-metal firmware builds for the Elite ME V6 and has passed maintainer-reported [hardware acceptance](docs/validation/M0-2026-11-28.md). See the [development guide](docs/DEVELOPMENT.md) for build and flash commands.
 
 ## Documentation
 - [Roadmap](docs/ROADMAP.md)
