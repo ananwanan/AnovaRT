@@ -97,7 +97,7 @@
       "depends_on": [
         "M3"
       ],
-      "status": "implemented",
+      "status": "done",
       "acceptance": "Verify SVC/PSP bootstrap, bounded cooperative tasks, full register preservation, stack diagnostics and reclamation, one million board handoffs and DWT on both clocks and heap configurations, RESET and cold boot.",
       "evidence": [
         {
@@ -112,8 +112,7 @@
           "artifact": "docs/validation/M4-hardware-2026-11-28.md",
           "result": "pass"
         }
-      ],
-      "blocker": "Physical RESET and independent cold boot await operator observation."
+      ]
     },
     {
       "id": "M5",
