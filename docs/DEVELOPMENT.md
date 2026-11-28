@@ -74,3 +74,11 @@ linker enforces the actual available SRAM. Pass the same size to the ELF
 checker with `--heap-bytes`. Clear the environment override after the custom
 build. `cargo m3-run` invokes the existing SWD runner and overwrites Flash.
 Follow the approval procedure before running it.
+
+## M4 task context
+
+Build with `cargo m4-build` for TLSF or `cargo m4-no-heap-build` for static
+stacks without a heap. The corresponding run aliases overwrite Flash.
+The [M4 procedure](validation/M4-hardware-template.md) lists board approvals,
+isolated clock/allocator profiles, verified downloads, UART and standalone
+reset checks. See the [design](task/OVERVIEW.md) and [implementation plan](task/PLAN.md).

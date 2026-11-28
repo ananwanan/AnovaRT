@@ -66,3 +66,10 @@ STM32F103ZET6 remains the only active implementation target. Raspberry Pi 4B and
 | Drivers/components | Reusable protocols and capabilities with target-specific hardware implementations; optional services selected according to board resources. |
 
 Keep the initial single-core, no-MMU design. Do not assume every target is 32-bit, has an NVIC/SysTick/PendSV, shares the STM32 memory map, or needs the same interrupt/context representation. Optional MMU, SMP and cache/DMA handling on future targets are not prerequisites for STM32 work. Choose narrow interfaces as actual needs arise; do not build unused portability infrastructure. Future ports should use explicit target/board selection without changing the STM32 default. See [platform policy](boards/README.md) and the [deferred Raspberry Pi 4B plan](boards/raspberry-pi-4b.md).
+
+## M4 task execution
+
+The portable kernel owns the bounded task table and exclusive task-stack
+loans. Cortex-M3 owns the initial exception image and the SVC/PendSV
+assembly. The board supplies linker bounds and the validation firmware owns
+the cooperative selection and lifecycle integration. See the [M4 design](task/OVERVIEW.md).

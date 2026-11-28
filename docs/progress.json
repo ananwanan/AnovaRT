@@ -97,9 +97,17 @@
       "depends_on": [
         "M3"
       ],
-      "status": "in_progress",
-      "acceptance": "TCB, MSP/PSP and PendSV; verify register preservation and stack integrity.",
-      "evidence": []
+      "status": "implemented",
+      "acceptance": "Verify SVC/PSP bootstrap, bounded cooperative tasks, full register preservation, stack diagnostics and reclamation, one million board handoffs and DWT on both clocks and heap configurations, RESET and cold boot.",
+      "evidence": [
+        {
+          "commit": "f341189",
+          "environment": "Windows x86_64, Rust 1.100.0, thumbv7m-none-eabi",
+          "artifact": "docs/validation/M4-local-2026-11-28.md",
+          "result": "pass"
+        }
+      ],
+      "blocker": "Complete the remaining board acceptance in the M4 hardware record."
     },
     {
       "id": "M5",

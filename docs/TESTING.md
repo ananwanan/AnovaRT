@@ -156,3 +156,13 @@ The [M3 hardware procedure](validation/M3-hardware-template.md) covers
 UART and DS0, bounded on-board stress tests, DWT, reset and cold boot.
 Keep software checks, per-image SWD verification and runtime observations
 in separate evidence fields.
+
+## M4 task context verification
+
+Run workspace tests, strict host and target Clippy, the M4 release profiles
+and the M0–M3 ELF regression matrix. Run `python scripts/check_m4_elf.py <elf>`
+with `--heap-bytes 12288` for the default TLSF reservation. The checker
+validates vectors, sections, memory bounds, allocator symbols and critical
+Thumb exception instructions. The [board procedure](validation/M4-hardware-template.md)
+covers execution, the deterministic register fixture, one million handoffs,
+DWT, invalid PSP, both clocks and both allocator configurations.
