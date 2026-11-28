@@ -18,7 +18,9 @@ SECTIONS {
     } > FLASH
 
     .text : ALIGN(4) {
+        __text_start = .;
         *(.text .text.*)
+        __text_end = .;
         *(.rodata .rodata.*)
     } > FLASH
 

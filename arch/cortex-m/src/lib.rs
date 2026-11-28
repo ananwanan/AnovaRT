@@ -4,6 +4,7 @@
 #[cfg(target_os = "none")]
 core::arch::global_asm!(
     include_str!("startup.s"),
+    m4 = const cfg!(feature = "m4") as u8,
     m3 = const cfg!(feature = "m3") as u8,
     m2 = const cfg!(feature = "m2") as u8,
 );
@@ -78,3 +79,5 @@ pub fn halt() -> ! {
         )
     }
 }
+
+pub mod context;

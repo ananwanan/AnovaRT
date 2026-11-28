@@ -23,6 +23,8 @@ M2 adds Cortex-M3 interrupt control, a 1 ms SysTick timebase and terminal fault 
 
 M3 adds fixed-size memory pools, an optional TLSF heap and MSP stack diagnostics. `cargo m3-build` includes TLSF. `cargo m3-no-heap-build` builds the heap-free profile. Local verification and maintainer-reported [board acceptance](docs/validation/M3-startup-retest-2026-11-28.md#hardware-acceptance) passed. See the [memory overview](docs/memory/OVERVIEW.md).
 
+M4 adds cooperative task contexts with independent static stacks, SVC startup, and PendSV switching. Build with `cargo m4-build` (TLSF) or `cargo m4-no-heap-build`. Local checks and board acceptance passed. See the [M4 hardware record](docs/validation/M4-hardware-2026-11-28.md).
+
 ## Documentation
 - [Roadmap](docs/ROADMAP.md)
 - [Progress](docs/PROGRESS.md)

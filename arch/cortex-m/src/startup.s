@@ -14,10 +14,18 @@
 .rept 4
 .word 0
 .endr
+.if {m4}
+.word m4_svc
+.else
 .word m2_svc
+.endif
 .word DebugMonitorHandler
 .word 0
+.if {m4}
+.word m4_pendsv
+.else
 .word m2_pendsv
+.endif
 .word m2_systick
 .else
 .word __stack_top

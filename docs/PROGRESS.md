@@ -12,7 +12,7 @@ States: planned, in_progress, blocked, implemented (awaiting acceptance), done. 
 | M1 | Clock and logging | done |
 | M2 | Interrupts and exceptions | done |
 | M3 | Memory management | done |
-| M4 | Task context | planned |
+| M4 | Task context | done |
 | M5 | Real-time scheduling | planned |
 | M6 | Synchronization | planned |
 | M7 | IPC and timers | planned |
@@ -41,3 +41,7 @@ M0 evidence is recorded in the [local build and ELF validation](validation/M0-lo
 M1 passed local verification and maintainer-reported hardware acceptance. [Local validation](validation/M1-local-2026-11-28.md) · [Hardware acceptance](validation/M1-2026-11-28.md)
 
 M2 passed [local validation](validation/M2-local-2026-11-28.md) and [maintainer-reported hardware acceptance](validation/M2-2026-11-28.md).
+
+M4 substage evidence is in the [local validation record](validation/M4-local-2026-11-28.md).
+
+The [M4 board record](validation/M4-hardware-2026-11-28.md) includes stress, DWT, SWD reset and maintainer-confirmed standalone checks.

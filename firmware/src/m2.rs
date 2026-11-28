@@ -5,9 +5,8 @@ use anova_cortex_m::{
     fault::{self, ExceptionFrame, Status},
     interrupt, nvic,
     nvic::{Priority, SystemException},
-    systick,
 };
-use anova_kernel::time::{TICK_HZ, Timebase};
+use anova_kernel::time::Timebase;
 use core::{
     arch::{asm, global_asm},
     fmt::Write,
@@ -73,7 +72,7 @@ const fn priority(level: u8) -> Priority {
     }
 }
 
-pub fn run(mut led: board::Led) -> ! {
+pub fn run(led: board::Led) -> ! {
     let fault = if cfg!(feature = "m1-fault-hse") {
         Fault::HseTimeout
     } else if cfg!(feature = "m1-fault-pll") {
@@ -144,15 +143,26 @@ pub fn run(mut led: board::Led) -> ! {
         unsafe { asm!("udf #0", options(noreturn, nostack)) };
     }
 
+    #[cfg(feature = "m4")]
+    crate::m4::run(led, serial, init.clocks.hclk_hz);
+    #[cfg(not(feature = "m4"))]
+    ticker(led, serial, init.clocks.hclk_hz)
+}
+
+#[cfg(not(feature = "m4"))]
+fn ticker(mut led: board::Led, mut serial: Option<board::usart::Usart1>, hclk: u32) -> ! {
     let mut edge = CLOCK.ticks();
     let mut log = edge;
     let mut previous_tick = edge;
-    let reload = systick::start(init.clocks.hclk_hz, TICK_HZ).expect("invalid SysTick clock");
+    let reload = anova_cortex_m::systick::start(hclk, anova_kernel::time::TICK_HZ)
+        .expect("invalid SysTick clock");
     if let Some(uart) = serial.as_mut() {
         let _ = writeln!(
             uart,
             "[M2] SysTick HCLK={} RELOAD={} Hz={}\r",
-            init.clocks.hclk_hz, reload, TICK_HZ
+            hclk,
+            reload,
+            anova_kernel::time::TICK_HZ
         );
     }
     #[cfg(feature = "m3-test-performance")]
@@ -188,6 +198,11 @@ fn report(serial: &mut Option<board::usart::Usart1>, test: &str, details: &str) 
     if let Some(uart) = serial.as_mut() {
         let _ = writeln!(uart, "[M2 PASS] {test}: {details}\r");
     }
+}
+
+#[cfg(feature = "m4")]
+pub(crate) fn ticks() -> u32 {
+    CLOCK.ticks()
 }
 
 extern "C" fn systick_entry() {
@@ -254,6 +269,7 @@ extern "C" fn high_handler() {
 
 global_asm!(
     include_str!("m2_entries.s"),
+    m4 = const cfg!(feature = "m4") as u8,
     test_irq = const (NVIC_TEST || CRITICAL_TEST) as u8,
     low = const LOW.number(),
     high = const HIGH.number(),

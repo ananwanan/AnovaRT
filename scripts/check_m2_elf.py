@@ -16,7 +16,7 @@ def string_at(table, offset):
     return table[offset:table.index(b"\0", offset)].decode()
 
 
-def verify(path, legacy, heap_enabled=False):
+def verify(path, legacy, heap_enabled=False, task_context=False):
     elf = path.read_bytes()
     require(elf[:7] == b"\x7fELF\x01\x01\x01", "Expected little-endian ELF32")
     (kind, cpu, _, entry, phoff, shoff, _, _, phsize, phnum,
@@ -50,6 +50,8 @@ def verify(path, legacy, heap_enabled=False):
         5: "BusFaultHandler", 6: "UsageFaultHandler", 11: "m2_svc",
         12: "DebugMonitorHandler", 14: "m2_pendsv", 15: "m2_systick",
     }
+    if task_context:
+        core_handlers.update({11: "m4_svc", 14: "m4_pendsv"})
     for slot, value in enumerate(words[1:], 1):
         if slot in (7, 8, 9, 10, 13):
             require(value == 0, f"Reserved vector {slot} is nonzero")
