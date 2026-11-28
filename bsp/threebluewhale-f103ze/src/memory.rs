@@ -64,3 +64,12 @@ pub unsafe fn heap_backing() -> &'static mut [MaybeUninit<u64>] {
         )
     }
 }
+
+/// Executable addresses for saved exception return validation.
+pub fn code_range() -> Range<usize> {
+    unsafe extern "C" {
+        static __text_start: u8;
+        static __text_end: u8;
+    }
+    (&raw const __text_start).addr()..(&raw const __text_end).addr()
+}

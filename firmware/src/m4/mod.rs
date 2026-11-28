@@ -46,7 +46,7 @@ struct Board {
 
 static mut BOARD: Option<Board> = None;
 static mut IDS: Option<[TaskId; 3]> = None;
-static mut WORKER_PEAKS: [usize; 3] = [0; 3];
+static mut WORKER_PEAKS: [usize; 2] = [0; 2];
 static mut METRICS: [Metric; 4] = [Metric::EMPTY; 4];
 
 #[derive(Clone, Copy)]
@@ -313,7 +313,12 @@ extern "C" fn idle(_: u32) {
     let ticks = crate::m2::ticks().wrapping_sub(board.tick_start);
     assert_ne!(ticks, 0);
     // SAFETY: No worker remains to modify the completed diagnostics.
-    let [first, second, _] = unsafe { (&raw const WORKER_PEAKS).read() };
+    let [first, second] = unsafe { (&raw const WORKER_PEAKS).read() };
+    // SAFETY: The sampling workers have exited. Copy their completed results.
+    let metrics = unsafe { (&raw const METRICS).read() };
+    if DWT.load(Relaxed) {
+        assert!(metrics.iter().all(|metric| metric.count == ROUNDS * 3));
+    }
     if let Some(uart) = board.uart.as_mut() {
         let _ = writeln!(
             uart,
@@ -324,13 +329,10 @@ extern "C" fn idle(_: u32) {
             "[M4 PASS] switches={switches} ticks={ticks} nested_irq={irqs} peaks=[{first},{second},{peak}] bytes\r"
         );
         if DWT.load(Relaxed) {
-            // SAFETY: The sampling workers have exited.
-            let metrics = unsafe { (&raw const METRICS).read() };
             for (label, metric) in ["save", "restore", "PendSV", "handoff"]
                 .into_iter()
                 .zip(metrics)
             {
-                assert_eq!(metric.count, ROUNDS * 3);
                 let avg = metric.sum / u64::from(metric.count);
                 let _ = writeln!(
                     uart,
@@ -343,6 +345,7 @@ extern "C" fn idle(_: u32) {
         }
     }
 
+    M4_COMPLETE.store(0x4d34_5041, Relaxed);
     let mut edge = crate::m2::ticks();
     let mut on = true;
     board.led.set(on);
@@ -358,3 +361,6 @@ extern "C" fn idle(_: u32) {
         unsafe { core::arch::asm!("wfi", options(nostack, preserves_flags)) };
     }
 }
+
+#[unsafe(no_mangle)]
+static M4_COMPLETE: AtomicU32 = AtomicU32::new(0);

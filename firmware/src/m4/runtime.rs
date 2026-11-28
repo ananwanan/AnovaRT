@@ -29,17 +29,9 @@ struct Context {
 impl Context {
     fn new(stack: Stack, entry: context::Entry, argument: u32) -> Self {
         let sp = stack.top() - context::FRAME_BYTES;
-        let frame =
-            context::InitialFrame::new(entry as usize as u32, exit as *const () as u32, argument)
-                .expect("Thumb function pointers");
         // SAFETY: Stack construction guarantees alignment and room for the
         // basic frame. The exclusive loan has never been used for execution.
-        unsafe {
-            stack
-                .pointer(sp)
-                .cast::<context::InitialFrame>()
-                .write(frame)
-        };
+        unsafe { context::write_initial(stack.pointer(sp), entry, exit, argument) };
         Self {
             stack,
             sp,
@@ -54,23 +46,10 @@ impl Context {
         }
         // SAFETY: The checked frame is either built by new or stacked by
         // hardware on exception entry. Only the hardware words are read.
-        let (pc, xpsr) = unsafe {
-            (
-                self.stack.pointer(sp + context::PC_OFFSET).read_volatile(),
-                self.stack
-                    .pointer(sp + context::XPSR_OFFSET)
-                    .read_volatile(),
-            )
+        let bytes = unsafe {
+            context::frame_bytes(self.stack.pointer(sp), anova_board::memory::code_range())
         };
-        unsafe extern "C" {
-            static __text_start: u8;
-            static __text_end: u8;
-        }
-        let text = (&raw const __text_start).addr()..(&raw const __text_end).addr();
-        let padding = usize::from(xpsr & context::ALIGN_PADDING != 0) * 4;
-        text.contains(&(pc as usize))
-            && context::valid_thread_frame(pc, xpsr)
-            && self.stack.fits(sp, context::FRAME_BYTES + padding)
+        bytes.is_some_and(|size| self.stack.fits(sp, size))
     }
 }
 
@@ -245,7 +224,7 @@ extern "C" fn m4_first() -> usize {
         assert!(rt.boot == Boot::Armed);
         let id = rt.tasks.next_ready().expect("armed first task");
         let first = &rt.tasks.get(id).unwrap().context;
-        assert!(first.valid(first.sp), "M4 first context invalid");
+        validate(first.valid(first.sp), 3, "M4 first context invalid");
         let sp = first.sp;
         rt.tasks.handoff(Some(id), false).unwrap();
         rt.boot = Boot::Running;
@@ -266,7 +245,7 @@ extern "C" fn m4_select(psp: usize) -> usize {
         let saved = psp
             .checked_sub(context::SOFTWARE_BYTES)
             .expect("M4 PSP underflow");
-        assert!(outgoing.valid(saved), "M4 outgoing context invalid");
+        validate(outgoing.valid(saved), 1, "M4 outgoing context invalid");
         let next = rt.tasks.next_ready();
         if next.is_none() && !rt.exiting {
             return 0;
@@ -276,7 +255,7 @@ extern "C" fn m4_select(psp: usize) -> usize {
             Some(id) => &rt.tasks.get(id).unwrap().context,
             None => rt.idle.as_ref().expect("idle context"),
         };
-        assert!(target.valid(target.sp), "M4 incoming context invalid");
+        validate(target.valid(target.sp), 2, "M4 incoming context invalid");
         let sp = target.sp;
         rt.tasks.handoff(next, rt.exiting).unwrap();
         rt.exiting = false;
@@ -302,4 +281,15 @@ pub fn inject_invalid_sp(id: TaskId) {
         let task = rt.tasks.context_mut(id).unwrap();
         task.sp = task.stack.top();
     });
+}
+
+#[unsafe(no_mangle)]
+static M4_REJECTED_CONTEXT: AtomicU32 = AtomicU32::new(0);
+
+#[cold]
+fn validate(valid: bool, stage: u32, message: &str) {
+    if !valid {
+        M4_REJECTED_CONTEXT.store(stage, Relaxed);
+        panic!("{message}");
+    }
 }

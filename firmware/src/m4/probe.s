@@ -25,10 +25,13 @@ m4_probe_registers:
     mov.w r3, #0x10000000
     add r12, r0, #12
     add lr, r0, #14
+    /* Force CCR.STKALIGN padding. The resumed SP must include that word. */
+    sub sp, #4
     cmp r0, r0
     str r3, [r2]
     dsb
     isb
+    add sp, #4
 
     str r0, [sp]
     str r1, [sp, #4]

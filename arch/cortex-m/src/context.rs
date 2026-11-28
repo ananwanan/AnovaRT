@@ -165,3 +165,35 @@ pub fn main_stack_pointer() -> usize {
     unsafe { core::arch::asm!("mrs {}, msp", out(reg) value, options(nostack, preserves_flags)) };
     value
 }
+
+/// Construct a new task image in its exclusive stack storage.
+///
+/// # Safety
+/// The aligned destination must have room for the entire Frame, be writable,
+/// and belong to a task that cannot execute yet.
+#[cfg(all(target_os = "none", feature = "m4"))]
+pub unsafe fn write_initial(dst: *mut u32, entry: Entry, exit: Exit, argument: u32) {
+    let frame = InitialFrame::new(entry as usize as u32, exit as usize as u32, argument)
+        .expect("Thumb function pointers");
+    // SAFETY: The caller guarantees an aligned, exclusive destination.
+    unsafe { dst.cast::<InitialFrame>().write(frame) };
+}
+
+/// Return the required software plus hardware frame size, including padding.
+///
+/// # Safety
+/// The PC and xPSR words at the architecture offsets must be initialized,
+/// aligned and readable for the duration of this call.
+#[cfg(all(target_os = "none", feature = "m4"))]
+pub unsafe fn frame_bytes(frame: *const u32, text: core::ops::Range<usize>) -> Option<usize> {
+    // SAFETY: Only the documented, caller-checked words are read. Volatile
+    // accesses observe hardware exception stacking and assembly writes.
+    let (pc, xpsr) = unsafe {
+        (
+            frame.add(PC_OFFSET / 4).read_volatile(),
+            frame.add(XPSR_OFFSET / 4).read_volatile(),
+        )
+    };
+    let padding = usize::from(xpsr & ALIGN_PADDING != 0) * 4;
+    (text.contains(&(pc as usize)) && valid_thread_frame(pc, xpsr)).then_some(FRAME_BYTES + padding)
+}

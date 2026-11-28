@@ -52,12 +52,14 @@ def check_arm_profile(elf, header):
             "Expected ARMv7-M with Thumb-2")
 
 
-def check(path, profile, expected_heap):
+def check(path, profile, expected_heap, task_context=False):
     heap_enabled = profile == "tlsf"
-    sections, symbols, flash_segments, loads = verify(path, profile == "legacy", heap_enabled)
+    sections, symbols, flash_segments, loads = verify(path, profile == "legacy", heap_enabled, task_context)
     check_arm_profile(path.read_bytes(), sections.get(".ARM.attributes"))
     ram_start = symbols["__sram_start"]
     ram_end = symbols["__sram_end"]
+    if task_context:
+        require(symbols["__text_start"] < symbols["__text_end"], "Empty code range")
     require((ram_start, ram_end) == (0x20000000, 0x20010000), "Unexpected SRAM range")
 
     specs = (
