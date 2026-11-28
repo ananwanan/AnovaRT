@@ -4,4 +4,8 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[features]
+log-debug = []
+log-trace = []
+
 [dependencies]
