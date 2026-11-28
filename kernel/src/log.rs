@@ -103,19 +103,26 @@ mod tests {
     fn filters_before_evaluating_arguments() {
         let mut text = String::new();
         let mut sink = TextSink(&mut text);
-        let trace = || {
-            assert!(cfg!(feature = "log-trace"));
+        let mut trace_calls = 0;
+        let mut debug_calls = 0;
+        trace!(&mut sink, "{}", {
+            trace_calls += 1;
             1
-        };
-        let debug = || {
-            assert!(cfg!(any(feature = "log-trace", feature = "log-debug")));
+        })
+        .unwrap();
+        debug!(&mut sink, "{}", {
+            debug_calls += 1;
             2
-        };
-        trace!(&mut sink, "{}", trace()).unwrap();
-        debug!(&mut sink, "{}", debug()).unwrap();
+        })
+        .unwrap();
         info!(&mut sink, "{}", 3).unwrap();
         warn!(&mut sink, "{}", 4).unwrap();
         error!(&mut sink, "{}", 5).unwrap();
+        assert_eq!(trace_calls, u8::from(cfg!(feature = "log-trace")));
+        assert_eq!(
+            debug_calls,
+            u8::from(cfg!(any(feature = "log-trace", feature = "log-debug")))
+        );
         let expected = if cfg!(feature = "log-trace") {
             "[TRACE] 1\r\n[DEBUG] 2\r\n"
         } else if cfg!(feature = "log-debug") {
