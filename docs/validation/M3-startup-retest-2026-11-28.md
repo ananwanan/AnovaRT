@@ -30,3 +30,44 @@ replacement-image procedure. No new UART transcript, flashed hash, or
 fault snapshot was supplied with that report. Record this as a
 maintainer-reported startup retest. Dedicated profiles, DWT measurements,
 reset and standalone cold boot still require evidence.
+
+
+## Maintainer-reported HSI performance run
+
+The Elite ME V6 UART capture at 19:42:21–19:42:24 reports HSI at 8 MHz,
+a 12,288-byte TLSF arena, FL=11, SL=8 and size optimization. All reported
+M3 boot checks passed. The heap returned to zero used bytes, one free
+block and 12,272 bytes of free payload. The MSP canary was intact, with
+2,748 bytes estimated peak and 1,340 bytes remaining after the guard.
+SysTick reported reload 7999 and ticks through 3000. The capture did not
+include the flashed ELF hash, Verify output, or a UART echo exchange.
+
+Each row below reports 128 samples in DWT cycles. PRIMASK was set in
+the first batch. The later SysTick-enabled batch reported 14 delivered
+ticks in total.
+
+| Scenario | Operation | Min | Observed max | Avg |
+|---|---|---:|---:|---:|
+| Pool | Allocate | 75 | 75 | 75 |
+| Pool | Deallocate | 86 | 86 | 86 |
+| Baseline | PRIMASK entry and exit | 15 | 15 | 15 |
+| Baseline | Counter envelope | 1 | 1 | 1 |
+| Unfragmented | TLSF exact allocate | 247 | 247 | 247 |
+| Unfragmented | TLSF isolated deallocate | 211 | 211 | 211 |
+| Exhausted | TLSF OOM | 127 | 127 | 127 |
+| Unfragmented | TLSF allocate with split | 397 | 397 | 397 |
+| Unfragmented | TLSF deallocate with coalesce | 299 | 299 | 299 |
+| Unfragmented | TLSF high alignment | 497 | 497 | 497 |
+| Unfragmented | TLSF protected allocate | 432 | 439 | 435 |
+| Unfragmented | TLSF protected deallocate | 322 | 322 | 322 |
+| Fragmented | TLSF allocate with split | 379 | 379 | 379 |
+| Fragmented | TLSF deallocate with coalesce | 302 | 302 | 302 |
+| Fragmented | TLSF high alignment | 497 | 497 | 497 |
+| Fragmented | TLSF protected allocate | 269 | 418 | 377 |
+| Fragmented | TLSF protected deallocate | 238 | 325 | 302 |
+| SysTick enabled | TLSF protected allocate | 440 | 479 | 442 |
+| SysTick enabled | TLSF protected deallocate | 337 | 374 | 338 |
+| SysTick enabled | Empty PRIMASK entry and exit | 17 | 53 | 17 |
+
+These observed cycle counts apply to the captured workload. HSE
+performance and the remaining dedicated board checks are pending evidence.
