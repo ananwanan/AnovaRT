@@ -105,9 +105,15 @@
           "environment": "Windows x86_64, Rust 1.100.0, thumbv7m-none-eabi",
           "artifact": "docs/validation/M4-local-2026-11-28.md",
           "result": "pass"
+        },
+        {
+          "commit": "f341189",
+          "environment": "Three Blue Whales Elite ME V6 / STM32F103ZET6, HSI and HSE/PLL, SWD and COM5",
+          "artifact": "docs/validation/M4-hardware-2026-11-28.md",
+          "result": "pass"
         }
       ],
-      "blocker": "Complete the remaining board acceptance in the M4 hardware record."
+      "blocker": "Physical RESET and independent cold boot await operator observation."
     },
     {
       "id": "M5",

@@ -43,3 +43,5 @@ M1 passed local verification and maintainer-reported hardware acceptance. [Local
 M2 passed [local validation](validation/M2-local-2026-11-28.md) and [maintainer-reported hardware acceptance](validation/M2-2026-11-28.md).
 
 M4 substage evidence is in the [local validation record](validation/M4-local-2026-11-28.md).
+
+The [M4 board record](validation/M4-hardware-2026-11-28.md) includes stress, DWT and SWD reset results.
