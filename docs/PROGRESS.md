@@ -9,7 +9,7 @@ States: planned, in_progress, blocked, implemented (awaiting acceptance), done. 
 | ID | Milestone | Status |
 |---|---|---|
 | M0 | Bare-metal bootstrap | done |
-| M1 | Clock and logging | implemented |
+| M1 | Clock and logging | done |
 | M2 | Interrupts and exceptions | planned |
 | M3 | Memory management | planned |
 | M4 | Task context | planned |
@@ -36,4 +36,4 @@ Platform scope: all 23 tracked milestones concern the active STM32F103ZET6 track
 
 M0 evidence is recorded in the [local build and ELF validation](validation/M0-local-2026-11-28.md) and the [maintainer-reported hardware acceptance](validation/M0-2026-11-28.md).
 
-M1 implementation and local checks passed. The maintainer observed a normal startup banner, bidirectional UART, DS0 blinking and a successful RESET. Frequency measurement, physical routing details, fallback, panic and debugger-free cold boot remain open. [Partial hardware record](validation/M1-2026-11-28.md). [Local validation](validation/M1-local-2026-11-28.md) · [Hardware acceptance template](validation/M1-hardware-template.md)
+M1 passed local verification and maintainer-reported hardware acceptance. [Local validation](validation/M1-local-2026-11-28.md) · [Hardware acceptance](validation/M1-2026-11-28.md)
