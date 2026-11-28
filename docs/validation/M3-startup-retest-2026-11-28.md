@@ -20,7 +20,13 @@ and the ELF checker, and has SHA-256
 Its artifact is `target/m3-board/retest-normal/thumbv7m-none-eabi/release/anova-firmware`.
 M2 and M3 no-heap release and ELF checks passed.
 
-Board retest is pending. If the original stopped image is still present,
+For the original failure, if the original stopped image is still present,
 read its fault record before reset or reflashing, using the address
 `0x20000004` from that ELF. Then verify the replacement follows M2
 initialization with M3 self-tests, SysTick and UART echo.
+
+The maintainer subsequently reported normal running after receiving the
+replacement-image procedure. No new UART transcript, flashed hash, or
+fault snapshot was supplied with that report. Record this as a
+maintainer-reported startup retest. Dedicated profiles, DWT measurements,
+reset and standalone cold boot still require evidence.
