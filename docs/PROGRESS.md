@@ -32,7 +32,7 @@ States: planned, in_progress, blocked, implemented (awaiting acceptance), done. 
 | M21 | Loadable applications | planned |
 | M22 | Platform portability | planned |
 
-M3.1–M3.6 passed [local validation](validation/M3-local-2026-11-28.md). Board runtime, DWT cycle measurements and reset/cold-start acceptance are pending. See the [M3 hardware procedure](validation/M3-hardware-template.md).
+M3.1–M3.6 passed [local validation](validation/M3-local-2026-11-28.md). The first confirmed-HSE image passed SWD Verify and reached M2 startup output. A corrected image is awaiting board retest. DWT and reset/cold-start acceptance are pending. See the [M3 startup retest record](validation/M3-startup-retest-2026-11-28.md). See the [M3 hardware procedure](validation/M3-hardware-template.md).
 
 Platform scope: all 23 tracked milestones concern the active STM32F103ZET6 track; M22 is a portability design review, not a port. Raspberry Pi 4B and other boards are deferred outside the active milestone count; no implementation, builds, emulator or hardware tests are planned for them in the current phase. See [platform matrix](boards/README.md).
 
