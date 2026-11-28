@@ -4,4 +4,4 @@
 *.bin
 *.hex
 *.map
-.vscode/settings.json
+.idea/
