@@ -80,7 +80,13 @@ pub fn initialize(hclk: u32, serial: &mut Option<Usart1>) -> MemoryPool<'static>
     let measured_stack = measure_stack(&regions);
     assert!(measured_stack.canary_intact && measured_stack.pointer_valid);
     if STACK || CORRUPTION {
-        stack_check(&regions);
+        let (shallow, deep) = stack_check(&regions);
+        report!(
+            &mut sink,
+            "[M3 PASS] Stack depth shallow={} deep={} controlled canary corruption detected",
+            shallow,
+            deep
+        );
     }
     report!(&mut sink, "[M3 PASS] MSP watermark and canary");
 
@@ -153,7 +159,7 @@ fn deep_sample(regions: &memory::Regions) -> StackStats {
     stats
 }
 
-fn stack_check(regions: &memory::Regions) {
+fn stack_check(regions: &memory::Regions) -> (usize, usize) {
     let shallow = measure_stack(regions);
     let deep = deep_sample(regions);
     assert!(deep.canary_intact && deep.pointer_valid);
@@ -171,6 +177,7 @@ fn stack_check(regions: &memory::Regions) {
     words[0] = 0;
     assert!(!simulated.inspect(words, top).unwrap().canary_intact);
     assert!(!simulated.inspect(words, top + 8).unwrap().pointer_valid);
+    (shallow.stack_pointer, deep.stack_pointer)
 }
 
 impl MemoryStats {

@@ -89,13 +89,14 @@ pub(super) fn run(sink: &mut BoardLog<'_>) {
 
     if TLSF || FRAGMENTATION {
         let operations = 10_000;
-        stress(operations, FRAGMENTATION);
+        let failures = stress(operations, FRAGMENTATION);
         assert_eq!(diagnostics(), initial);
         report!(
             sink,
-            "[M3 PASS] TLSF stress operations={} alternating={}",
+            "[M3 PASS] TLSF stress operations={} alternating={} expected_ooms={}",
             operations,
-            FRAGMENTATION
+            FRAGMENTATION,
+            failures
         );
     }
 }
@@ -115,16 +116,23 @@ impl Allocation {
     }
 }
 
-fn stress(operations: usize, alternating: bool) {
+fn stress(operations: usize, alternating: bool) -> usize {
     let mut random = 0x173d_c1b5u32;
     let mut active: [Option<Allocation>; 24] = [None; 24];
     let heap = anova_board::memory::regions().heap;
+    let mut failures = 0;
     for i in 0..operations {
         random ^= random << 13;
         random ^= random >> 17;
         random ^= random << 5;
         let slot = random as usize % active.len();
-        if let Some(block) = active[slot].take() {
+        if i % 113 == 112 {
+            assert_eq!(alloc(heap.len(), 8), Err(MemoryError::Exhausted));
+            failures += 1;
+            for block in active.iter().flatten() {
+                block.verify();
+            }
+        } else if let Some(block) = active[slot].take() {
             block.verify();
             release(block.address);
         } else {
@@ -167,4 +175,5 @@ fn stress(operations: usize, alternating: bool) {
         block.verify();
         release(block.address);
     }
+    failures
 }

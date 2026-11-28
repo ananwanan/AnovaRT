@@ -2,14 +2,60 @@
 """Verify M3 linker regions and report STM32F103ZET6 resource usage."""
 
 import argparse
+import struct
 from pathlib import Path
 
 from check_m2_elf import require, verify
 
 
+def check_arm_profile(elf, header):
+    """Read the ARM EABI file attributes through Tag_CPU_arch_profile."""
+    require(header is not None, "Missing ARM build attributes")
+    section = elf[header[4]:header[4] + header[5]]
+    require(section[:1] == b"A", "Unexpected ARM build attributes format")
+    start = 1
+    while start + 4 <= len(section):
+        length, = struct.unpack_from("<I", section, start)
+        end = start + length
+        require(length >= 5 and end <= len(section), "Invalid ARM vendor attribute length")
+        name_end = section.find(b"\0", start + 4, end)
+        require(name_end >= 0, "Unterminated ARM attribute vendor")
+        if section[start + 4:name_end] == b"aeabi":
+            break
+        start = end
+    else:
+        raise SystemExit("Missing ARM EABI vendor attributes")
+
+    cursor = name_end + 1
+    require(cursor + 5 <= end and section[cursor] == 1, "Missing ARM file attributes")
+    length, = struct.unpack_from("<I", section, cursor + 1)
+    file_end = cursor + length
+    require(length >= 5 and file_end <= end, "Invalid ARM file attribute length")
+    cursor += 5
+    values = {}
+    while cursor < file_end:
+        tag = section[cursor]
+        cursor += 1
+        if tag in (4, 5, 67):
+            end_string = section.find(b"\0", cursor, file_end)
+            require(end_string >= 0, "Unterminated ARM string attribute")
+            cursor = end_string + 1
+        elif tag in (6, 7, 8, 9):
+            require(cursor < file_end and section[cursor] < 128, "Invalid ARM ISA file attribute")
+            values[tag] = section[cursor]
+            cursor += 1
+            if tag == 9:
+                break
+        else:
+            break
+    require((values.get(6), values.get(7), values.get(9)) == (10, ord("M"), 2),
+            "Expected ARMv7-M with Thumb-2")
+
+
 def check(path, profile, expected_heap):
     heap_enabled = profile == "tlsf"
     sections, symbols, flash_segments, loads = verify(path, profile == "legacy", heap_enabled)
+    check_arm_profile(path.read_bytes(), sections.get(".ARM.attributes"))
     ram_start = symbols["__sram_start"]
     ram_end = symbols["__sram_end"]
     require((ram_start, ram_end) == (0x20000000, 0x20010000), "Unexpected SRAM range")
@@ -78,4 +124,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.heap_bytes is not None and args.profile != "tlsf":
         parser.error("--heap-bytes requires --profile tlsf")
-    check(args.elf, args.profile, (args.heap_bytes or 12288) if args.profile == "tlsf" else 0)
+    check(args.elf, args.profile, (args.heap_bytes if args.heap_bytes is not None else 12288)
+          if args.profile == "tlsf" else 0)
