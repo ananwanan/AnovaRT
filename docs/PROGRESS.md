@@ -10,7 +10,7 @@ States: planned, in_progress, blocked, implemented (awaiting acceptance), done. 
 |---|---|---|
 | M0 | Bare-metal bootstrap | done |
 | M1 | Clock and logging | done |
-| M2 | Interrupts and exceptions | implemented |
+| M2 | Interrupts and exceptions | done |
 | M3 | Memory management | planned |
 | M4 | Task context | planned |
 | M5 | Real-time scheduling | planned |
@@ -38,4 +38,4 @@ M0 evidence is recorded in the [local build and ELF validation](validation/M0-lo
 
 M1 passed local verification and maintainer-reported hardware acceptance. [Local validation](validation/M1-local-2026-11-28.md) · [Hardware acceptance](validation/M1-2026-11-28.md)
 
-M2 passed [local validation](validation/M2-local-2026-11-28.md). [Hardware acceptance](validation/M2-hardware-template.md) is pending.
+M2 passed [local validation](validation/M2-local-2026-11-28.md) and [maintainer-reported hardware acceptance](validation/M2-2026-11-28.md).

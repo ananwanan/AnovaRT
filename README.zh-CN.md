@@ -19,7 +19,7 @@ M0 裸机固件已可为 Elite ME V6 编译，维护者确认[真机验收](docs
 
 M1 的时钟、USART1、日志和 Panic 诊断已通过本地验证，维护者确认[真机验收](docs/validation/M1-2026-11-28.md)通过。`cargo m1-build` 默认使用 HSI，并在操作员确认板级参数前保持 USART1 引脚原状。
 
-M2 增加 Cortex-M3 中断控制、1 ms SysTick 时基和终止式故障诊断。使用 `cargo m2-build` 构建。参见[真机验收流程](docs/validation/M2-hardware-template.md)。
+M2 增加 Cortex-M3 中断控制、1 ms SysTick 时基和终止式故障诊断。使用 `cargo m2-build` 构建。维护者确认[真机验收](docs/validation/M2-2026-11-28.md)通过。
 
 ## 项目文档
 以下开发文档统一使用英语：

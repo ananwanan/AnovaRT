@@ -1,6 +1,7 @@
 # M2 hardware acceptance
 
-Status: pending. Record observations from the specified image on the Three
+For the milestone closeout, see the [hardware acceptance record](M2-2026-11-28.md).
+Record observations from the specified image on the Three
 Blue Whales Elite ME V6 with STM32F103ZET6. Expected output below is a pass
 criterion. Use the [board guide](../boards/stm32f103ze.md) for wiring.
 
