@@ -74,3 +74,50 @@ mod tests {
         assert!(InitialFrame::new(0x101, 0x200, 0).is_none());
     }
 }
+
+#[cfg(all(target_os = "none", feature = "m4"))]
+core::arch::global_asm!(
+    include_str!("context_switch.s"),
+    thread_msp = const THREAD_MSP,
+    thread_psp = const THREAD_PSP,
+);
+
+/// Enter the installed M4 SVC bootstrap. It abandons the caller's MSP frames.
+///
+/// # Safety
+/// Call once from privileged, unmasked Thread/MSP with BASEPRI and FAULTMASK
+/// clear and with all initialized boot data moved into static storage.
+#[cfg(all(target_os = "none", feature = "m4"))]
+pub unsafe fn start() -> ! {
+    // SAFETY: The caller has armed the one-shot SVC bootstrap and owns the
+    // startup call chain. The handler enters a different, initialized frame.
+    unsafe { core::arch::asm!("svc #0", "udf #4", options(noreturn)) }
+}
+
+#[cfg(all(target_os = "none", feature = "m4"))]
+pub fn process_stack_pointer() -> usize {
+    let value: usize;
+    // SAFETY: Reading PSP changes no machine state.
+    unsafe { core::arch::asm!("mrs {}, psp", out(reg) value, options(nostack, preserves_flags)) };
+    value
+}
+
+#[cfg(all(target_os = "none", feature = "m4"))]
+pub fn uses_process_stack() -> bool {
+    let value: u32;
+    // SAFETY: Reading CONTROL changes no machine state.
+    unsafe {
+        core::arch::asm!("mrs {}, CONTROL", out(reg) value, options(nostack, preserves_flags))
+    };
+    value & 2 != 0
+}
+
+#[cfg(all(target_os = "none", feature = "m4"))]
+pub fn faultmask_clear() -> bool {
+    let value: u32;
+    // SAFETY: Reading FAULTMASK changes no machine state.
+    unsafe {
+        core::arch::asm!("mrs {}, FAULTMASK", out(reg) value, options(nostack, preserves_flags))
+    };
+    value == 0
+}

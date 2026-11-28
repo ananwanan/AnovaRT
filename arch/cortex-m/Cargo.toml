@@ -7,5 +7,6 @@ license.workspace = true
 [features]
 m2 = []
 m3 = ["m2"]
+m4 = ["m3"]
 
 [dependencies]
