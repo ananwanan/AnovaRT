@@ -30,7 +30,8 @@
       ],
       "status": "implemented",
       "acceptance": "Verify HSE/PLL at 72 MHz, HSI recovery for HSE/PLL/SYSCLK startup failures, USART1 baud and echo, log filtering, panic output, DS0, reset and debugger-free cold boot.",
-      "blocker": "Board crystal and USART1 routing need confirmation. M1 programming requires operator approval before the hardware acceptance checks.",
+      "blocker": "Normal boot, UART echo, DS0 and RESET passed. Frequency measurement, physical routing details, fallback, panic and debugger-free cold boot remain open.",
+      "partial_hardware_record": "docs/validation/M1-2026-11-28.md",
       "evidence": [
         {
           "commit": "9391f55fe3f42754b3b777bb7e337a9080b4b3d1",
