@@ -11,7 +11,7 @@ States: planned, in_progress, blocked, implemented (awaiting acceptance), done. 
 | M0 | Bare-metal bootstrap | done |
 | M1 | Clock and logging | done |
 | M2 | Interrupts and exceptions | done |
-| M3 | Memory management | planned |
+| M3 | Memory management | in_progress |
 | M4 | Task context | planned |
 | M5 | Real-time scheduling | planned |
 | M6 | Synchronization | planned |

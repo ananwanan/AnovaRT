@@ -74,7 +74,7 @@
       "depends_on": [
         "M2"
       ],
-      "status": "planned",
+      "status": "in_progress",
       "acceptance": "Memory pools, optional heap and stack watermark; verify alignment, exhaustion and reclamation.",
       "evidence": []
     },

@@ -5,6 +5,16 @@ edition.workspace = true
 license.workspace = true
 
 [features]
+m3 = ["m2", "anova-cortex-m/m3"]
+heap-tlsf = ["m3"]
+m3-test-pool = ["m3"]
+m3-test-tlsf = ["heap-tlsf"]
+m3-test-alignment = ["heap-tlsf"]
+m3-test-fragmentation = ["heap-tlsf"]
+m3-test-oom = ["heap-tlsf"]
+m3-test-stack = ["m3"]
+m3-test-corruption = ["heap-tlsf", "anova-kernel/memory-validation"]
+m3-test-performance = ["heap-tlsf"]
 m2 = ["m1", "anova-cortex-m/m2"]
 m2-test-nvic = ["m2"]
 m2-test-critical = ["m2"]

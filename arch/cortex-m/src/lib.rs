@@ -4,8 +4,15 @@
 #[cfg(target_os = "none")]
 core::arch::global_asm!(
     include_str!("startup.s"),
+    m3 = const cfg!(feature = "m3") as u8,
     m2 = const cfg!(feature = "m2") as u8,
 );
+
+#[cfg(all(target_os = "none", feature = "m3"))]
+pub mod stack;
+
+#[cfg(all(target_os = "none", feature = "m3"))]
+pub mod cycles;
 
 pub mod fault;
 pub mod nvic;

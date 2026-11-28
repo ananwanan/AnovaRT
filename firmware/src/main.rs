@@ -2,10 +2,15 @@
 #![cfg_attr(target_os = "none", no_std)]
 #![cfg_attr(target_os = "none", no_main)]
 
+#[cfg(all(target_os = "none", feature = "heap-tlsf"))]
+extern crate alloc;
+
 #[cfg(all(target_os = "none", feature = "m1"))]
 mod m1;
 #[cfg(all(target_os = "none", feature = "m2"))]
 mod m2;
+#[cfg(all(target_os = "none", feature = "m3"))]
+mod m3;
 
 #[cfg(target_os = "none")]
 static mut STARTUP_DATA: u32 = 0x4d30_5254;
