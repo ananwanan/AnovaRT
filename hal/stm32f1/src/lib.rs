@@ -7,5 +7,10 @@ mod mmio;
 #[cfg(any(target_os = "none", test))]
 pub mod gpio;
 
+#[cfg(any(target_os = "none", test))]
+pub mod rcc;
+
+pub mod usart;
+
 #[cfg(target_os = "none")]
 core::arch::global_asm!(include_str!("vectors.s"));
