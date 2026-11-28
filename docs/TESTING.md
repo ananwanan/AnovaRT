@@ -128,3 +128,14 @@ probe-rs read @probeOptions b32 0x40013808 1
 4. Confirm DS0 is active-low and blinks for at least three complete cycles in normal M1, each fallback and the independent M0 image.
 5. Reflash normal M1 and repeat banner, echo and LED checks after the board RESET button. With power off, detach SWD and remove every source of board power, including any onboard USB connection that supplies it. Restore power and repeat with a serial-only connection. Capture the banner on cold boot with the serial receiver ready or record it on the analyzer.
 6. Complete the [hardware record](validation/M1-hardware-template.md) and update both progress files after all checks pass.
+
+## M2 interrupts and exceptions
+
+Host tests cover IRQ bank arithmetic and limits, priority encoding, SysTick
+reload, wraparound, EXC_RETURN, stack validation and fault status flags.
+Validation firmware checks nested PRIMASK and BASEPRI restoration,
+priority ordering, active/pending readback, and SVC/PendSV exception return.
+These runtime checks require the STM32F103ZET6. Run `scripts/check_m2_elf.py`
+on each target profile and use LLVM objdump to inspect `m2_fault_entry` and
+the returning veneers. Keep the tested ELF SHA-256 with its serial log and
+measurement. Follow the [M2 hardware procedure](validation/M2-hardware-template.md).

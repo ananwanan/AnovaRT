@@ -34,3 +34,20 @@ Enable only one fault or panic test profile per build. Add `--features log-debug
 ## Target selection and deferred boards
 
 The only active target is thumbv7m-none-eabi on the current STM32F103ZET6 board. The M0 Cargo aliases select the firmware package, target and board-specific linker and runner. Host-only tests of portable logic remain applicable. Raspberry Pi 4B (candidate aarch64-unknown-none) and other boards are documentation-only deferred targets. Do not install their toolchains, add Cargo targets or runners, generate firmware images, run emulators, flash or debug them for current milestones. The Raspberry Pi target is a future bare-metal port, not a Linux application. See [platform policy](boards/README.md).
+
+## Build M2
+
+```powershell
+cargo m2-build
+cargo m2-build --features confirmed-hse-8mhz,confirmed-usart1 --target-dir target/m2-board/normal
+python scripts/check_m2_elf.py target/m2-board/normal/thumbv7m-none-eabi/release/anova-firmware
+```
+
+The default build uses HSI and leaves USART1 pins untouched. The confirmed
+build uses the validated 8 MHz crystal and USART1 mapping. M2 takes precedence
+over its M1 dependency and shares its clock and console setup. Select at most
+one interrupt, fault, clock-injection or panic test per target build. Board
+confirmation and log verbosity flags can accompany one profile. Use
+`cargo m2-run` only with operator approval to overwrite Flash. The
+[hardware procedure](validation/M2-hardware-template.md) covers building
+separate images, capturing evidence and restoring the normal firmware.
