@@ -5,7 +5,7 @@ An independent Rust-first embedded real-time kernel, initially implemented only 
 | ID | Milestone | Dependencies | Implementation and acceptance |
 |---|---|---|---|
 | M0 | Bare-metal bootstrap | None | Workspace, linker script, vector table, reset handler and LED; demonstrate repository firmware blinking on hardware. |
-| M1 | Clock and logging | M0 | HSI/HSE/PLL, UART and panic logging; verify clock frequency, baud rate and fallback. |
+| M1 | Clock and logging | M0 | Verify HSE/PLL at 72 MHz, HSI fallback for HSE/PLL/SYSCLK startup failures, USART1 baud and echo, log filtering, panic output, DS0, reset and debugger-free cold boot. Local and board evidence are tracked in [Progress](PROGRESS.md). |
 | M2 | Interrupts and exceptions | M1 | NVIC, SysTick and exception context; verify priorities and fault reporting. |
 | M3 | Memory management | M2 | Memory pools, optional heap and stack watermark; verify alignment, exhaustion and reclamation. |
 | M4 | Task context | M3 | TCB, MSP/PSP and PendSV; verify register preservation and stack integrity. |

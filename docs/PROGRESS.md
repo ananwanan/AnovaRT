@@ -9,7 +9,7 @@ States: planned, in_progress, blocked, implemented (awaiting acceptance), done. 
 | ID | Milestone | Status |
 |---|---|---|
 | M0 | Bare-metal bootstrap | done |
-| M1 | Clock and logging | in_progress |
+| M1 | Clock and logging | implemented |
 | M2 | Interrupts and exceptions | planned |
 | M3 | Memory management | planned |
 | M4 | Task context | planned |
@@ -35,3 +35,5 @@ States: planned, in_progress, blocked, implemented (awaiting acceptance), done. 
 Platform scope: all 23 tracked milestones concern the active STM32F103ZET6 track; M22 is a portability design review, not a port. Raspberry Pi 4B and other boards are deferred outside the active milestone count; no implementation, builds, emulator or hardware tests are planned for them in the current phase. See [platform matrix](boards/README.md).
 
 M0 evidence is recorded in the [local build and ELF validation](validation/M0-local-2026-11-28.md) and the [maintainer-reported hardware acceptance](validation/M0-2026-11-28.md).
+
+M1 implementation and local checks passed. Confirm the fitted HSE frequency and USART1 routing, obtain authorization to program Flash, then complete the bench checks. [Local validation](validation/M1-local-2026-11-28.md) · [Hardware acceptance template](validation/M1-hardware-template.md)

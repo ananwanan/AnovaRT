@@ -28,9 +28,17 @@
       "depends_on": [
         "M0"
       ],
-      "status": "in_progress",
-      "acceptance": "HSI/HSE/PLL, UART and panic logging; verify clock frequency, baud rate and fallback.",
-      "evidence": []
+      "status": "implemented",
+      "acceptance": "Verify HSE/PLL at 72 MHz, HSI recovery for HSE/PLL/SYSCLK startup failures, USART1 baud and echo, log filtering, panic output, DS0, reset and debugger-free cold boot.",
+      "blocker": "Board crystal and USART1 routing need confirmation. M1 programming requires operator approval before the hardware acceptance checks.",
+      "evidence": [
+        {
+          "commit": "9391f55fe3f42754b3b777bb7e337a9080b4b3d1",
+          "environment": "Windows x86_64, Rust 1.100.0, thumbv7m-none-eabi release builds and host verification",
+          "result": "pass",
+          "artifact": "docs/validation/M1-local-2026-11-28.md"
+        }
+      ]
     },
     {
       "id": "M2",

@@ -16,6 +16,21 @@ Build output is `target/thumbv7m-none-eabi/release/anova-firmware`. Install the 
 
 Branch policy: dev is the intended default and integration branch; main is for stable releases; create feature branches such as feat/m0-bootstrap from dev. Each milestone PR must link acceptance records. Never force-push shared branches.
 
+## M1 build profiles
+
+Run `cargo m1-build` for the default HSI image with candidate USART1 pins untouched. The hardware procedure shows how to select the independent confirmation features, create separate artifacts and verify programming. [M1 hardware acceptance](TESTING.md#m1-hardware-acceptance)
+
+| Alias | Firmware |
+|---|---|
+| `cargo m0-build` / `cargo m0-run` | Independent M0 firmware and runner |
+| `cargo m1-build` | M1 normal startup |
+| `cargo m1-hse-fallback-build` | Inject HSE startup failure |
+| `cargo m1-pll-fallback-build` | Inject PLL lock failure |
+| `cargo m1-switch-fallback-build` | Inject SYSCLK switch failure |
+| `cargo m1-panic-build` | Trigger a startup panic |
+
+Enable only one fault or panic test profile per build. Add `--features log-debug` or `--features log-trace` to increase compile-time log verbosity. The default minimum level is INFO. Use `--target-dir` to keep simultaneous ELF artifacts distinct. Host filter tests run with `cargo test --locked -p anova-kernel --features log-debug` and again with `log-trace`.
+
 ## Target selection and deferred boards
 
 The only active target is thumbv7m-none-eabi on the current STM32F103ZET6 board. The M0 Cargo aliases select the firmware package, target and board-specific linker and runner. Host-only tests of portable logic remain applicable. Raspberry Pi 4B (candidate aarch64-unknown-none) and other boards are documentation-only deferred targets. Do not install their toolchains, add Cargo targets or runners, generate firmware images, run emulators, flash or debug them for current milestones. The Raspberry Pi target is a future bare-metal port, not a Linux application. See [platform policy](boards/README.md).

@@ -22,6 +22,14 @@ The architecture layer owns core vectors and reset assembly. The chip layer supp
 
 STM32 resource targets (not measurements): 512 KiB Flash and 64 KiB SRAM. Initial SRAM budget in KiB: static data 8, handler stack 4, task stacks 16, heap 12, graphics buffers 8, device buffers 4, reserve 12. Minimum kernel target: Flash <32 KiB, static RAM <4 KiB excluding application and task stacks. Use partial LCD rendering rather than a full framebuffer. Exclude file systems and GUI from M0–M7.
 
+## M1 startup and logging
+
+- Firmware reuses the reset entry and memory self-check, initializes DS0, then configures clocks and the optional console before printing the boot banner. Configurable interrupts remain masked. DS0 delays are sliced so the main loop can poll for single-byte USART1 echo.
+- The STM32 HAL owns RCC, Flash ACR and USART1 registers. Flash latency and AHB/APB prescalers precede the PLL switch. The HAL derives the bus frequencies from the selected source and prescaler readback after switch confirmation. Recovery confirms SWS=HSI before disabling PLL/HSE or reducing latency. A failed HSI recovery parks the CPU.
+- The BSP chooses whether the operator has confirmed an 8 MHz crystal and USART1 routing. It binds USART1 to PA9/PA10 and passes the current PCLK2 through `Clocks`. Clock configuration is fixed after console initialization. Clock fault injection exercises boot recovery. Runtime oscillator supervision is outside M1.
+- The kernel owns the `Sink` interface, five level macros and compile-time filtering. A sink receives a level and `fmt::Arguments` for a complete record, which gives future implementations a place to add timestamps and serialization. M1 uses a mutable `fmt::Write` adapter with synchronous output.
+- Firmware owns the panic handler. Atomic flags publish console readiness and guard recursive entry. The terminal path can reuse the initialized UART without resuming the interrupted writer. It caps output at 512 bytes with bounded TXE and TC polling, then parks the core. Formatting runs synchronously. A custom formatter used in a panic must itself return.
+
 ## Portability boundaries
 
 STM32F103ZET6 remains the only active implementation target. Raspberry Pi 4B and other boards are deferred, not supported firmware targets. The commented paths above are illustrative future locations, not a request to create them now.

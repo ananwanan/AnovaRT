@@ -17,6 +17,8 @@
 ## 当前状态
 M0 裸机固件已可为 Elite ME V6 编译，维护者确认[真机验收](docs/validation/M0-2026-11-28.md)通过。编译与烧录命令见[开发指南](docs/DEVELOPMENT.md)。
 
+M1 的时钟、USART1、日志和 Panic 诊断已实现并完成本地验证。板级连线、72 MHz 运行及其余硬件检查待[真机验收](docs/TESTING.md#m1-hardware-acceptance)。`cargo m1-build` 默认使用 HSI，并在操作员确认板级参数前保持 USART1 引脚原状。
+
 ## 项目文档
 以下开发文档统一使用英语：
 - [开发路线图](docs/ROADMAP.md)
