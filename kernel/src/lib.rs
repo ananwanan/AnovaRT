@@ -4,4 +4,5 @@
 //! Portable kernel services.
 
 pub mod log;
+pub mod memory;
 pub mod time;

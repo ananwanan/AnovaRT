@@ -51,3 +51,26 @@ confirmation and log verbosity flags can accompany one profile. Use
 `cargo m2-run` only with operator approval to overwrite Flash. The
 [hardware procedure](validation/M2-hardware-template.md) covers building
 separate images, capturing evidence and restoring the normal firmware.
+
+
+## M3 firmware
+
+```powershell
+cargo m3-build
+cargo m3-no-heap-build
+python scripts/check_m3_elf.py target/m3/thumbv7m-none-eabi/release/anova-firmware --profile tlsf
+python scripts/check_m3_elf.py target/m3-no-heap/thumbv7m-none-eabi/release/anova-firmware --profile no-heap
+```
+
+The default aliases use HSI and avoid USART1 pin configuration. Enable the
+existing confirmation features only after confirming the board. The M3 aliases
+write to their own directories under `target`. For a different clock or
+console configuration, invoke `cargo build` with an isolated target directory
+as shown in the [board procedure](validation/M3-hardware-template.md).
+
+Use `ANOVART_HEAP_BYTES` for a different TLSF arena reservation. The firmware
+accepts an eight-byte multiple from 4,096 through 65,536 before linking. The
+linker enforces the actual available SRAM. Pass the same size to the ELF
+checker with `--heap-bytes`. Clear the environment override after the custom
+build. `cargo m3-run` invokes the existing SWD runner and overwrites Flash.
+Follow the approval procedure before running it.

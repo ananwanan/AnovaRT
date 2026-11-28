@@ -20,6 +20,18 @@ m2-fault-hard-build = "build --locked --release --target thumbv7m-none-eabi -p a
 m2-fault-irq-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2-fault-irq"
 m2-fault-silent-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2-fault-silent"
 
+m3-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features heap-tlsf --target-dir target/m3"
+m3-run = "run --locked --release --target thumbv7m-none-eabi -p anova-firmware --features heap-tlsf --target-dir target/m3"
+m3-no-heap-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m3 --target-dir target/m3-no-heap"
+m3-test-pool-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m3-test-pool --target-dir target/m3-test-pool"
+m3-test-tlsf-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m3-test-tlsf --target-dir target/m3-test-tlsf"
+m3-test-alignment-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m3-test-alignment --target-dir target/m3-test-alignment"
+m3-test-fragmentation-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m3-test-fragmentation --target-dir target/m3-test-fragmentation"
+m3-test-oom-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m3-test-oom --target-dir target/m3-test-oom"
+m3-test-stack-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m3-test-stack --target-dir target/m3-test-stack"
+m3-test-corruption-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m3-test-corruption --target-dir target/m3-test-corruption"
+m3-test-performance-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m3-test-performance --target-dir target/m3-test-performance"
+
 [target.thumbv7m-none-eabi]
 runner = [
     "probe-rs",

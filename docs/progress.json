@@ -74,9 +74,22 @@
       "depends_on": [
         "M2"
       ],
-      "status": "planned",
-      "acceptance": "Memory pools, optional heap and stack watermark; verify alignment, exhaustion and reclamation.",
-      "evidence": []
+      "status": "done",
+      "acceptance": "Verify fixed pools, optional TLSF, MSP diagnostics, alignment, exhaustion, reclamation, fragmented stress, performance and standalone operation on STM32F103ZET6.",
+      "evidence": [
+        {
+          "commit": "41707b00ecd568f3c7dc45056bd116e2d8d90405",
+          "environment": "Windows x86_64, Rust 1.100.0, thumbv7m-none-eabi release",
+          "result": "pass",
+          "artifact": "docs/validation/M3-local-2026-11-28.md"
+        },
+        {
+          "commit": "e31138f663da55f5760c5e70ff145a7eee9cc969",
+          "environment": "Elite ME V6 / STM32F103ZET6, maintainer-reported hardware acceptance; commit identifies the evaluated branch snapshot",
+          "result": "pass",
+          "artifact": "docs/validation/M3-startup-retest-2026-11-28.md#hardware-acceptance"
+        }
+      ]
     },
     {
       "id": "M4",

@@ -35,21 +35,23 @@ const fn selected(profiles: &[bool]) -> usize {
 }
 
 const _: () = assert!(
-    selected(&[
-        NVIC_TEST,
-        CRITICAL_TEST,
-        SVC_TEST,
-        WRAP_TEST,
-        USAGE_TEST,
-        BUS_TEST,
-        HARD_TEST,
-        IRQ_TEST,
-        SILENT_TEST,
-        cfg!(feature = "m1-fault-hse"),
-        cfg!(feature = "m1-fault-pll"),
-        cfg!(feature = "m1-fault-switch"),
-        cfg!(feature = "m1-panic"),
-    ]) <= 1,
+    (cfg!(feature = "m3") as usize)
+        + selected(&[
+            NVIC_TEST,
+            CRITICAL_TEST,
+            SVC_TEST,
+            WRAP_TEST,
+            USAGE_TEST,
+            BUS_TEST,
+            HARD_TEST,
+            IRQ_TEST,
+            SILENT_TEST,
+            cfg!(feature = "m1-fault-hse"),
+            cfg!(feature = "m1-fault-pll"),
+            cfg!(feature = "m1-fault-switch"),
+            cfg!(feature = "m1-panic"),
+        ])
+        <= 1,
     "select only one M2 validation profile or inherited M1 test"
 );
 
@@ -95,9 +97,14 @@ pub fn run(mut led: board::Led) -> ! {
         panic!("M1 panic diagnostic test");
     }
 
+    #[cfg(feature = "m3")]
+    let _memory = crate::m3::initialize(init.clocks.hclk_hz, &mut serial);
+
     // SAFETY: VTOR and the handlers are installed. SysTick and external IRQs
     // are enabled only by the code that owns their state.
     unsafe { interrupt::unmask() };
+    #[cfg(feature = "m3-test-tlsf")]
+    crate::m3::test_handler_rejection(&mut serial);
     if NVIC_TEST {
         test_nvic();
         report(
@@ -148,6 +155,8 @@ pub fn run(mut led: board::Led) -> ! {
             init.clocks.hclk_hz, reload, TICK_HZ
         );
     }
+    #[cfg(feature = "m3-test-performance")]
+    crate::m3::test_with_systick(&mut serial, || CLOCK.ticks());
     let mut on = false;
     loop {
         let now = CLOCK.uptime_ms();
@@ -186,6 +195,8 @@ extern "C" fn systick_entry() {
 }
 
 extern "C" fn svc_entry() {
+    #[cfg(feature = "m3-test-tlsf")]
+    crate::m3::request_in_handler();
     SVC_SEEN.store(u32::from(interrupt::exception_number()), Relaxed);
 }
 

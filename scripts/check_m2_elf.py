@@ -16,7 +16,7 @@ def string_at(table, offset):
     return table[offset:table.index(b"\0", offset)].decode()
 
 
-def verify(path, legacy):
+def verify(path, legacy, heap_enabled=False):
     elf = path.read_bytes()
     require(elf[:7] == b"\x7fELF\x01\x01\x01", "Expected little-endian ELF32")
     (kind, cpu, _, entry, phoff, shoff, _, _, phsize, phnum,
@@ -68,13 +68,19 @@ def verify(path, legacy):
     require(symbols["__fault_stack_top"] <= symbols["__stack_bottom"], "MSP overlap")
     require(all(symbols[n] % 8 == 0 for n in ("__stack_bottom", "__fault_stack_top")),
             "Unaligned MSP")
-    require(not any(n.startswith(("__rust_alloc", "__rdl_alloc", "__rg_alloc"))
-                    or n in ("malloc", "calloc", "realloc", "free") for n in symbols),
-            "Unexpected allocator symbol")
+    allocator = any(n.startswith(("__rust_alloc", "__rdl_alloc", "__rg_alloc"))
+                    or "__rust_alloc_error_handler" in n
+                    or n in ("malloc", "calloc", "realloc", "free") for n in symbols)
+    require(allocator == heap_enabled, "Allocator symbols do not match the heap profile")
+    if heap_enabled:
+        require("M3_HANDLER_REJECTIONS" in symbols, "Missing M3 global allocator diagnostics")
 
     flash_segments = []
+    loads = []
     for n in range(phnum):
-        kind, _, _, physical, size, _, _, _ = struct.unpack_from("<8I", elf, phoff + n * phsize)
+        kind, _, virtual, physical, size, memory_size, _, _ = struct.unpack_from("<8I", elf, phoff + n * phsize)
+        if kind == 1:
+            loads.append((virtual, physical, size, memory_size))
         if kind == 1 and size:
             require(0x08000000 <= physical < physical + size <= 0x08080000,
                     "File-backed load segment exceeds Flash")
@@ -94,6 +100,8 @@ def verify(path, legacy):
         print("  " + " ".join(f"{name}={symbols[name]:#010x}" for name in
                             (*core_handlers.values(), "DefaultHandler", "m2_fault_entry",
                              "m2_external_dispatch", "M2_FAULT_RECORD")))
+
+    return sections, symbols, flash_segments, loads
 
 
 if __name__ == "__main__":

@@ -62,6 +62,20 @@ Reset:
     str r3, [r1], #4
     b 3b
 4:
+    .if {m3}
+    /* SAFETY: No frame has been allocated. VTOR still selects the reset
+       aliases and the early terminal vector does not return. */
+    ldr r0, =__stack_bottom
+    ldr r1, =__stack_top
+    ldr r2, =0xdeadbeef
+    str r2, [r0], #4
+    str r2, [r0], #4
+    ldr r2, =0xa5a5a5a5
+5:
+    str r2, [r0], #4
+    cmp r0, r1
+    blo 5b
+    .endif
     /* Publish the physical Flash vector address once startup RAM is ready. */
     ldr r0, =0xe000ed08
     ldr r1, =__vectors_start

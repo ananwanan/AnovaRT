@@ -21,6 +21,8 @@ M1 的时钟、USART1、日志和 Panic 诊断已通过本地验证，维护者�
 
 M2 增加 Cortex-M3 中断控制、1 ms SysTick 时基和终止式故障诊断。使用 `cargo m2-build` 构建。维护者确认[真机验收](docs/validation/M2-2026-11-28.md)通过。
 
+M3 增加固定块内存池、可选 TLSF 堆和 MSP 栈诊断。使用 `cargo m3-build` 构建含 TLSF 的固件，使用 `cargo m3-no-heap-build` 构建无堆固件。本地验证已通过，维护者确认[真机验收](docs/validation/M3-startup-retest-2026-11-28.md#hardware-acceptance)通过。详见[内存管理概览](docs/memory/OVERVIEW.md)。
+
 ## 项目文档
 以下开发文档统一使用英语：
 - [开发路线图](docs/ROADMAP.md)

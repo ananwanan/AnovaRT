@@ -108,9 +108,19 @@ mod hardware {
     use crate::{interrupt, registers as reg};
 
     pub fn configure() {
-        // Set STKALIGN, DIV_0_TRP and UNALIGN_TRP while preserving other CCR bits.
+        const STKALIGN: u32 = 1 << 9;
+        const DIV_0_TRP: u32 = 1 << 4;
+        const UNALIGN_TRP: u32 = 1 << 3;
         let ccr = 0xe000_ed14;
-        reg::write(ccr, reg::read(ccr) | (1 << 9) | (1 << 4) | (1 << 3));
+        let required = reg::read(ccr) | STKALIGN | DIV_0_TRP;
+        // Rust/LLVM may combine byte accesses into unaligned word accesses
+        // on thumbv7m. M3 uses the architectural behavior for normal SRAM.
+        let configured = if cfg!(feature = "m3") {
+            required & !UNALIGN_TRP
+        } else {
+            required | UNALIGN_TRP
+        };
+        reg::write(ccr, configured);
         // Startup owns SHCSR; publish all three configurable fault enables.
         reg::write(0xe000_ed24, 7 << 16);
         interrupt::synchronize();
