@@ -8,7 +8,7 @@ pub type Exit = extern "C" fn() -> !;
 
 pub const THREAD_PSP: u32 = 0xffff_fffd;
 pub const THREAD_MSP: u32 = 0xffff_fff9;
-pub const SOFTWARE_BYTES: usize = 8 * size_of::<u32>();
+pub const SOFTWARE_BYTES: usize = size_of::<[u32; 8]>();
 pub const THUMB: u32 = 1 << 24;
 pub const ALIGN_PADDING: u32 = 1 << 9;
 
@@ -120,4 +120,48 @@ pub fn faultmask_clear() -> bool {
         core::arch::asm!("mrs {}, FAULTMASK", out(reg) value, options(nostack, preserves_flags))
     };
     value == 0
+}
+
+#[cfg(all(target_os = "none", feature = "m4"))]
+pub mod timing {
+    unsafe extern "C" {
+        static mut m4_cycle_trace: [u32; 6];
+    }
+
+    /// Enable sampling while the positively probed DWT session is live.
+    pub fn enable(_counter: &crate::cycles::CycleCounter) {
+        crate::interrupt::critical_section(|| {
+            // SAFETY: The handler is excluded and this is the aligned flag.
+            unsafe { (&raw mut m4_cycle_trace).cast::<u32>().write_volatile(1) };
+        });
+    }
+
+    /// Read save, restore and PendSV-software cycle deltas after a switch.
+    pub fn samples() -> [u32; 3] {
+        crate::interrupt::critical_section(|| {
+            let base = (&raw const m4_cycle_trace).cast::<u32>();
+            // SAFETY: The handler is excluded and all indices are in the
+            // .bss trace block. Reads are volatile across assembly writes.
+            let [entry, save, saved, restore, restored] =
+                unsafe { [1, 2, 3, 4, 5].map(|index| base.add(index).read_volatile()) };
+            [
+                saved.wrapping_sub(save),
+                restored.wrapping_sub(restore),
+                restored.wrapping_sub(entry),
+            ]
+        })
+    }
+
+    /// Read CYCCNT after the caller has verified a live DWT session.
+    pub fn time() -> u32 {
+        crate::registers::read(0xe000_1004)
+    }
+}
+
+#[cfg(all(target_os = "none", feature = "m4"))]
+pub fn main_stack_pointer() -> usize {
+    let value: usize;
+    // SAFETY: Reading MSP changes no machine state.
+    unsafe { core::arch::asm!("mrs {}, msp", out(reg) value, options(nostack, preserves_flags)) };
+    value
 }

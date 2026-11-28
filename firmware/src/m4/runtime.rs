@@ -79,6 +79,7 @@ enum Boot {
     Fresh,
     Armed,
     Running,
+    Parked,
 }
 
 struct Runtime {
@@ -139,7 +140,13 @@ pub fn create_static(
     }
     let stack = Stack::new(storage).map_err(|storage| (Error::InvalidStack, storage))?;
     let candidate = Context::new(stack, entry, argument);
-    with(|rt| rt.tasks.create(name, candidate)).map_err(|(error, candidate)| {
+    with(|rt| {
+        if rt.boot == Boot::Parked {
+            return Err((TableError::InvalidState, candidate));
+        }
+        rt.tasks.create(name, candidate)
+    })
+    .map_err(|(error, candidate)| {
         // SAFETY: The unsuccessful transaction did not publish the context.
         (Error::Table(error), unsafe {
             candidate.stack.into_storage()
@@ -248,7 +255,7 @@ extern "C" fn m4_first() -> usize {
 
 #[unsafe(no_mangle)]
 extern "C" fn m4_select(psp: usize) -> usize {
-    with(|rt| {
+    let target = with(|rt| {
         if rt.boot != Boot::Running {
             return 0;
         }
@@ -273,7 +280,26 @@ extern "C" fn m4_select(psp: usize) -> usize {
         let sp = target.sp;
         rt.tasks.handoff(next, rt.exiting).unwrap();
         rt.exiting = false;
+        if next.is_none() {
+            rt.boot = Boot::Parked;
+        }
         SWITCHES.fetch_add(1, Relaxed);
         sp
-    })
+    });
+    if target != 0 && SWITCHES.load(Relaxed).is_multiple_of(256) {
+        super::pend_test_irq();
+    }
+    target
+}
+
+pub const TCB_BYTES: usize = size_of::<anova_kernel::task::Task<Context>>();
+pub const TABLE_BYTES: usize = size_of::<Table<Context, CAPACITY>>();
+
+#[cfg(feature = "m4-test-invalid")]
+pub fn inject_invalid_sp(id: TaskId) {
+    with(|rt| {
+        assert_eq!(rt.tasks.get(id).unwrap().state(), State::Ready);
+        let task = rt.tasks.context_mut(id).unwrap();
+        task.sp = task.stack.top();
+    });
 }

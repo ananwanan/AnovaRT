@@ -32,6 +32,11 @@ m3-test-stack-build = "build --locked --release --target thumbv7m-none-eabi -p a
 m3-test-corruption-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m3-test-corruption --target-dir target/m3-test-corruption"
 m3-test-performance-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m3-test-performance --target-dir target/m3-test-performance"
 
+m4-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m4,heap-tlsf --target-dir target/m4"
+m4-run = "run --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m4,heap-tlsf --target-dir target/m4"
+m4-no-heap-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m4 --target-dir target/m4-no-heap"
+m4-no-heap-run = "run --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m4 --target-dir target/m4-no-heap"
+
 [target.thumbv7m-none-eabi]
 runner = [
     "probe-rs",

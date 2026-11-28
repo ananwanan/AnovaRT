@@ -5,9 +5,8 @@ use anova_cortex_m::{
     fault::{self, ExceptionFrame, Status},
     interrupt, nvic,
     nvic::{Priority, SystemException},
-    systick,
 };
-use anova_kernel::time::{TICK_HZ, Timebase};
+use anova_kernel::time::Timebase;
 use core::{
     arch::{asm, global_asm},
     fmt::Write,
@@ -155,12 +154,15 @@ fn ticker(mut led: board::Led, mut serial: Option<board::usart::Usart1>, hclk: u
     let mut edge = CLOCK.ticks();
     let mut log = edge;
     let mut previous_tick = edge;
-    let reload = systick::start(hclk, TICK_HZ).expect("invalid SysTick clock");
+    let reload = anova_cortex_m::systick::start(hclk, anova_kernel::time::TICK_HZ)
+        .expect("invalid SysTick clock");
     if let Some(uart) = serial.as_mut() {
         let _ = writeln!(
             uart,
             "[M2] SysTick HCLK={} RELOAD={} Hz={}\r",
-            hclk, reload, TICK_HZ
+            hclk,
+            reload,
+            anova_kernel::time::TICK_HZ
         );
     }
     #[cfg(feature = "m3-test-performance")]
@@ -267,6 +269,7 @@ extern "C" fn high_handler() {
 
 global_asm!(
     include_str!("m2_entries.s"),
+    m4 = const cfg!(feature = "m4") as u8,
     test_irq = const (NVIC_TEST || CRITICAL_TEST) as u8,
     low = const LOW.number(),
     high = const HIGH.number(),

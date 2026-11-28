@@ -8,6 +8,10 @@
 .global m2_external_dispatch
 .thumb_func
 m2_external_dispatch:
+.if {m4}
+    cmp r0, #{high}
+    beq.w m4_irq
+.endif
 .if {test_irq}
     cmp r0, #{low}
     beq.w {low_handler}

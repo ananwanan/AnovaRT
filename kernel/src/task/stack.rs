@@ -93,3 +93,45 @@ impl Stack {
         self.words.as_ptr().with_addr(address)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    extern crate std;
+
+    use super::*;
+    use std::boxed::Box;
+
+    #[test]
+    fn invalid_loans_are_returned() {
+        let a = Box::leak(Box::new(StackStorage([0; 130])));
+        assert!(Stack::new(&mut a.0[..126]).is_err());
+        let b = Box::leak(Box::new(StackStorage([0; 130])));
+        assert!(Stack::new(&mut b.0[1..129]).is_err());
+    }
+
+    #[test]
+    fn checked_bounds_watermark_and_canary() {
+        let storage = Box::leak(Box::new(StackStorage([0; 128])));
+        let (first, second) = storage.0.split_at_mut(128);
+        assert!(second.is_empty());
+        let stack = Stack::new(first).unwrap();
+        let top = stack.top();
+        let bottom = top - MIN_BYTES;
+        assert!(!stack.fits(bottom, 64));
+        assert!(!stack.fits(top - 68, 64));
+        assert!(!stack.fits(top - 64, 68));
+        assert!(!stack.fits(top - 64, usize::MAX));
+        assert!(stack.fits(bottom + GUARD_BYTES, MIN_BYTES - GUARD_BYTES));
+        // SAFETY: This storage has never been scheduled. Both writes are
+        // aligned initialized words intentionally addressed by the test.
+        unsafe {
+            stack.pointer(top - 128).write_volatile(0);
+            assert_eq!(stack.usage(top - 64).peak_used, 128);
+            stack.pointer(bottom).write_volatile(0);
+            let stats = stack.usage(top - 64);
+            assert!(!stats.canary_intact);
+            assert_eq!(stats.remaining, 0);
+            assert_eq!(stack.into_storage().len(), 128);
+        }
+    }
+}

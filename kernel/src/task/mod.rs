@@ -151,3 +151,63 @@ impl<T, const N: usize> Table<T, N> {
 }
 
 pub mod stack;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rollback_full_table_and_reuse_with_fresh_id() {
+        let mut table = Table::<_, 1>::new();
+        let first = table.create("first", 11).unwrap();
+        assert_eq!(table.get(first).unwrap().name, "first");
+        assert_eq!(table.create("overflow", 22), Err((Error::Full, 22)));
+        assert_eq!(table.current(), None);
+        assert_eq!(table.reap(first), Err(Error::InvalidState));
+        table.handoff(Some(first), false).unwrap();
+        assert_eq!(table.reap(first), Err(Error::InvalidState));
+        table.handoff(None, true).unwrap();
+        assert_eq!(table.reap(first), Ok(11));
+        assert_eq!(table.reap(first), Err(Error::UnknownTask));
+        let next = table.create("next", 33).unwrap();
+        assert_ne!(first, next);
+        assert_eq!(table.get(first).err(), Some(Error::UnknownTask));
+        assert_eq!(table.get(next).unwrap().context, 33);
+    }
+
+    #[test]
+    fn round_trip_and_last_exit() {
+        let mut table = Table::<_, 2>::new();
+        assert_eq!(table.handoff(None, true), Err(Error::InvalidState));
+        let a = table.create("a", ()).unwrap();
+        let b = table.create("b", ()).unwrap();
+        assert_eq!(table.next_ready(), Some(a));
+        table.handoff(Some(a), false).unwrap();
+        assert_eq!(table.handoff(Some(a), false), Err(Error::InvalidState));
+        assert_eq!(table.next_ready(), Some(b));
+        table.handoff(Some(b), false).unwrap();
+        assert_eq!(table.get(a).unwrap().state(), State::Ready);
+        assert_eq!(table.get(b).unwrap().state(), State::Running);
+        assert_eq!(table.next_ready(), Some(a));
+        table.handoff(Some(a), true).unwrap();
+        assert_eq!(table.get(b).unwrap().state(), State::Terminated);
+        assert_eq!(table.handoff(Some(b), false), Err(Error::InvalidState));
+        assert_eq!(table.next_ready(), None);
+        table.handoff(None, false).unwrap();
+        assert_eq!(table.current(), Some(a));
+        table.handoff(None, true).unwrap();
+        assert_eq!(table.current(), None);
+        assert_eq!(table.next_ready(), None);
+    }
+
+    #[test]
+    fn generation_exhaustion_retires_the_slot() {
+        let mut table = Table::<_, 1>::new();
+        table.slots[0].generation = u32::MAX - 1;
+        let id = table.create("final", ()).unwrap();
+        table.handoff(Some(id), false).unwrap();
+        table.handoff(None, true).unwrap();
+        table.reap(id).unwrap();
+        assert_eq!(table.create("retired", ()), Err((Error::Full, ())));
+    }
+}
