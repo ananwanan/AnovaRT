@@ -149,3 +149,5 @@ impl<T, const N: usize> Table<T, N> {
         Ok(self.slots[id.slot].task.take().unwrap().context)
     }
 }
+
+pub mod stack;
