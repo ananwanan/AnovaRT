@@ -29,7 +29,7 @@ The maintainer subsequently reported normal running after receiving the
 replacement-image procedure. No new UART transcript, flashed hash, or
 fault snapshot was supplied with that report. Record this as a
 maintainer-reported startup retest. Dedicated profiles, DWT measurements,
-reset and standalone cold boot still require evidence.
+reset and standalone cold boot were pending at the time of this startup report.
 
 
 ## Maintainer-reported HSI performance run
@@ -69,5 +69,17 @@ ticks in total.
 | SysTick enabled | TLSF protected deallocate | 337 | 374 | 338 |
 | SysTick enabled | Empty PRIMASK entry and exit | 17 | 53 | 17 |
 
-These observed cycle counts apply to the captured workload. HSE
-performance and the remaining dedicated board checks are pending evidence.
+These observed cycle counts apply to the captured workload.
+
+## Hardware acceptance
+
+On 2026-11-28 (UTC+8), the maintainer confirmed that all M3 hardware checks
+passed on the Three Blue Whales Elite ME V6 / STM32F103ZET6. The confirmation
+covers the remaining dedicated firmware profiles, the 72 MHz performance
+run, RESET and standalone cold boot with SWD disconnected, in addition to
+the earlier startup retest and HSI measurements. This is maintainer-reported
+acceptance. The earlier HSI UART capture is summarized above. The maintainer
+did not supply per-profile hashes, individual UART and Verify transcripts,
+or numerical HSE cycle measurements with the final confirmation. The
+progress record references branch snapshot `e31138f` and does not identify
+the exact images flashed for those additional runs.

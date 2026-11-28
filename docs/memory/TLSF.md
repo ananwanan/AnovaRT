@@ -118,7 +118,6 @@ measurement. Firmware runs those scans during boot validation.
 
 The DWT profile emits cycle observations for the pool, TLSF, coalescing,
 splitting, high alignment, exhausted lookup and the PRIMASK call path.
-It also samples protected calls with SysTick enabled. Measurements are
-pending board execution. Observed bounds and compiler output alone are
+It also samples protected calls with SysTick enabled. The [HSI cycle measurements](../validation/M3-startup-retest-2026-11-28.md#maintainer-reported-hsi-performance-run) were captured on the board. Observed bounds and compiler output alone are
 insufficient to establish WCET. See the [hardware
 procedure](../validation/M3-hardware-template.md).
