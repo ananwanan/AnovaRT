@@ -51,9 +51,22 @@
       "depends_on": [
         "M1"
       ],
-      "status": "planned",
-      "acceptance": "NVIC, SysTick and exception context; verify priorities and fault reporting.",
-      "evidence": []
+      "status": "done",
+      "acceptance": "Verify NVIC preemption, interrupt masks, SysTick timing at both clock rates, exception return and terminal diagnostics on the STM32F103ZET6.",
+      "evidence": [
+        {
+          "commit": "6286e25d589c62370a991a3a547b3b6ea8a963a2",
+          "environment": "Windows 11, Rust 1.100.0, thumbv7m-none-eabi; local only",
+          "result": "pass",
+          "artifact": "docs/validation/M2-local-2026-11-28.md"
+        },
+        {
+          "commit": "f6f3e1c6e8bc5c803f73e140bae6c4a83e0e5ab4",
+          "environment": "Elite ME V6 / STM32F103ZET6; maintainer report; exact flashed revision unavailable",
+          "result": "pass",
+          "artifact": "docs/validation/M2-2026-11-28.md"
+        }
+      ]
     },
     {
       "id": "M3",

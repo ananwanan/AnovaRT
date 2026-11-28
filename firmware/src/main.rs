@@ -4,6 +4,8 @@
 
 #[cfg(all(target_os = "none", feature = "m1"))]
 mod m1;
+#[cfg(all(target_os = "none", feature = "m2"))]
+mod m2;
 
 #[cfg(target_os = "none")]
 static mut STARTUP_DATA: u32 = 0x4d30_5254;
@@ -27,7 +29,10 @@ extern "C" fn firmware_main() -> ! {
     // It is the sole owner of PB5 and the only writer to RCC/GPIOB.
     let led = unsafe { anova_board::Led::init() };
 
-    #[cfg(feature = "m1")]
+    #[cfg(feature = "m2")]
+    m2::run(led);
+
+    #[cfg(all(feature = "m1", not(feature = "m2")))]
     m1::run(led);
 
     #[cfg(not(feature = "m1"))]

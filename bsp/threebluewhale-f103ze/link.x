@@ -12,6 +12,7 @@ __stack_bottom = __stack_top - 4K;
 
 SECTIONS {
     .vectors ORIGIN(FLASH) : ALIGN(512) {
+        __vectors_start = .;
         KEEP(*(.vectors.core))
         KEEP(*(.vectors.external))
     } > FLASH
@@ -40,6 +41,15 @@ SECTIONS {
         __bss_end = .;
     } > RAM
 
+    .fault_stack (NOLOAD) : ALIGN(8) {
+        __fault_stack_bottom = .;
+        KEEP(*(.fault_stack))
+        __fault_stack_top = .;
+    } > RAM
+
+    __sram_start = ORIGIN(RAM);
+    __sram_end = ORIGIN(RAM) + LENGTH(RAM);
+
     .stack __stack_bottom (NOLOAD) : ALIGN(8) {
         . += 4K;
     } > RAM
@@ -49,4 +59,6 @@ ASSERT(SIZEOF(.vectors) == (16 + 60) * 4, "unexpected vector count");
 ASSERT(ADDR(.vectors) == ORIGIN(FLASH), "vectors must start at Flash base");
 ASSERT((__stack_top & 7) == 0, "initial MSP must be 8-byte aligned");
 ASSERT((__stack_bottom & 7) == 0, "MSP stack base must be 8-byte aligned");
-ASSERT(__bss_end <= __stack_bottom, "static RAM overlaps the MSP stack");
+ASSERT(__fault_stack_top <= __stack_bottom, "static RAM overlaps the MSP stack");
+ASSERT((__vectors_start & 511) == 0, "VTOR alignment");
+ASSERT((__fault_stack_top & 7) == 0, "fault MSP alignment");

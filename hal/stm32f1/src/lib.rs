@@ -14,3 +14,5 @@ pub mod usart;
 
 #[cfg(target_os = "none")]
 core::arch::global_asm!(include_str!("vectors.s"));
+
+pub mod irq;

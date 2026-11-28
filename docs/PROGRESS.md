@@ -10,7 +10,7 @@ States: planned, in_progress, blocked, implemented (awaiting acceptance), done. 
 |---|---|---|
 | M0 | Bare-metal bootstrap | done |
 | M1 | Clock and logging | done |
-| M2 | Interrupts and exceptions | planned |
+| M2 | Interrupts and exceptions | done |
 | M3 | Memory management | planned |
 | M4 | Task context | planned |
 | M5 | Real-time scheduling | planned |
@@ -37,3 +37,5 @@ Platform scope: all 23 tracked milestones concern the active STM32F103ZET6 track
 M0 evidence is recorded in the [local build and ELF validation](validation/M0-local-2026-11-28.md) and the [maintainer-reported hardware acceptance](validation/M0-2026-11-28.md).
 
 M1 passed local verification and maintainer-reported hardware acceptance. [Local validation](validation/M1-local-2026-11-28.md) · [Hardware acceptance](validation/M1-2026-11-28.md)
+
+M2 passed [local validation](validation/M2-local-2026-11-28.md) and [maintainer-reported hardware acceptance](validation/M2-2026-11-28.md).

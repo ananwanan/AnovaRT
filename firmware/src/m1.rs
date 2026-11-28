@@ -10,6 +10,7 @@ use core::{
 static CONSOLE_READY: AtomicBool = AtomicBool::new(false);
 static PANICKING: AtomicBool = AtomicBool::new(false);
 
+#[cfg(not(feature = "m2"))]
 pub fn run(mut led: board::Led) -> ! {
     let hse_fault = cfg!(feature = "m1-fault-hse");
     let pll_fault = cfg!(feature = "m1-fault-pll");
@@ -27,22 +28,8 @@ pub fn run(mut led: board::Led) -> ! {
         Fault::None
     };
 
-    // SAFETY: Startup calls this once, with configurable interrupts masked.
-    // Initial LED setup completed all RCC accesses before ownership transfers.
-    let mut rcc = unsafe { board::rcc::Rcc::after_reset() };
-    let Ok(init) = board::init_clock(&mut rcc, fault) else {
-        anova_cortex_m::halt();
-    };
+    let (init, mut serial) = initialize(fault, true);
     let clocks = init.clocks;
-    // SAFETY: This is the only initialization of the selected pins and USART1.
-    // Clock and pin configuration remain fixed once the console is live.
-    let mut serial = unsafe { board::init_console(&mut rcc, clocks) }
-        .ok()
-        .flatten();
-    if let Some(uart) = serial.as_mut() {
-        CONSOLE_READY.store(true, Ordering::Release);
-        let _ = banner(uart, init);
-    }
     if panic_test {
         panic!("M1 panic diagnostic test");
     }
@@ -58,19 +45,49 @@ pub fn run(mut led: board::Led) -> ! {
             led.set(on);
             remaining = slices_per_toggle;
         }
-        if let Some(uart) = serial.as_mut() {
-            match uart.receive() {
-                Ok(Some(byte)) => {
-                    let _ = uart.send(byte);
-                }
-                Ok(None) => {}
-                Err(error) => {
-                    let _ = warn!(&mut TextSink(uart), "USART1 RX {:?}", error);
-                }
-            }
-        }
+        echo(&mut serial);
         anova_cortex_m::delay_iterations(1_000);
         remaining -= 1;
+    }
+}
+
+pub(crate) fn initialize(
+    fault: Fault,
+    use_console: bool,
+) -> (board::rcc::ClockInit, Option<Usart1>) {
+    // SAFETY: Startup calls this once, with configurable interrupts masked.
+    // Initial LED setup completed all RCC accesses before ownership transfers.
+    let mut rcc = unsafe { board::rcc::Rcc::after_reset() };
+    let Ok(init) = board::init_clock(&mut rcc, fault) else {
+        anova_cortex_m::halt();
+    };
+    // SAFETY: This is the only initialization of the selected pins and USART1.
+    // Clock and pin configuration remain fixed once the console is live.
+    let mut serial = if use_console {
+        unsafe { board::init_console(&mut rcc, init.clocks) }
+            .ok()
+            .flatten()
+    } else {
+        None
+    };
+    if let Some(uart) = serial.as_mut() {
+        CONSOLE_READY.store(true, Ordering::Release);
+        let _ = banner(uart, init);
+    }
+    (init, serial)
+}
+
+pub(crate) fn echo(serial: &mut Option<Usart1>) {
+    if let Some(uart) = serial.as_mut() {
+        match uart.receive() {
+            Ok(Some(byte)) => {
+                let _ = uart.send(byte);
+            }
+            Ok(None) => {}
+            Err(error) => {
+                let _ = warn!(&mut TextSink(uart), "USART1 RX {:?}", error);
+            }
+        }
     }
 }
 
@@ -105,12 +122,12 @@ fn banner(uart: &mut Usart1, init: board::rcc::ClockInit) -> fmt::Result {
     uart.flush().map_err(|_| fmt::Error)
 }
 
-struct PanicWriter {
+pub(crate) struct TerminalWriter {
     uart: Usart1,
     bytes_left: usize,
 }
 
-impl Write for PanicWriter {
+impl Write for TerminalWriter {
     fn write_str(&mut self, text: &str) -> fmt::Result {
         for byte in text.bytes() {
             if self.bytes_left == 0 {
@@ -123,17 +140,30 @@ impl Write for PanicWriter {
     }
 }
 
-#[panic_handler]
-fn panic(info: &PanicInfo<'_>) -> ! {
+pub(crate) fn terminal_output() -> Option<TerminalWriter> {
+    anova_cortex_m::interrupt::mask();
     if PANICKING.swap(true, Ordering::AcqRel) || !CONSOLE_READY.load(Ordering::Acquire) {
-        anova_cortex_m::halt();
+        return None;
     }
-    // SAFETY: Readiness publishes completed USART initialization. Configurable
-    // interrupts remain masked and this terminal path never resumes firmware.
+    // SAFETY: Readiness publishes completed USART initialization. This
+    // terminal path never resumes firmware, and ISRs do not use USART1.
     let uart = unsafe { Usart1::for_terminal_diagnostics() };
-    let mut output = PanicWriter {
+    Some(TerminalWriter {
         uart,
         bytes_left: 512,
+    })
+}
+
+impl TerminalWriter {
+    pub(crate) fn flush(&mut self) {
+        let _ = self.uart.flush();
+    }
+}
+
+#[panic_handler]
+fn panic(info: &PanicInfo<'_>) -> ! {
+    let Some(mut output) = terminal_output() else {
+        anova_cortex_m::halt();
     };
     let location = match info.location() {
         Some(location) => write!(
@@ -146,6 +176,6 @@ fn panic(info: &PanicInfo<'_>) -> ! {
         None => output.write_str("[PANIC] unknown location: "),
     };
     let _ = location.and_then(|()| write!(&mut output, "{}\r\n", info.message()));
-    let _ = output.uart.flush();
+    output.flush();
     anova_cortex_m::halt()
 }

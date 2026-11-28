@@ -19,6 +19,8 @@ The M0 bare-metal firmware builds for the Elite ME V6 and has passed maintainer-
 
 M1 clock, USART1, logging and panic diagnostics passed local verification and maintainer-reported [hardware acceptance](docs/validation/M1-2026-11-28.md). `cargo m1-build` defaults to HSI and leaves USART1 pins untouched until the operator confirms the board parameters.
 
+M2 adds Cortex-M3 interrupt control, a 1 ms SysTick timebase and terminal fault diagnostics. Build with `cargo m2-build`. The maintainer confirmed [hardware acceptance](docs/validation/M2-2026-11-28.md).
+
 ## Documentation
 - [Roadmap](docs/ROADMAP.md)
 - [Progress](docs/PROGRESS.md)
