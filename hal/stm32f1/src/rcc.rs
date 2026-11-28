@@ -69,6 +69,7 @@ pub enum Fallback {
     PllTimeout,
     SwitchTimeout,
     FlashConfiguration,
+    HsiStopTimeout,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -161,6 +162,11 @@ fn try_pll(io: &mut impl Registers, fault: Fault, budget: u32) -> Result<Clocks,
     let switched = wait(io, Register::Cfgr, SWS, PLL << 2, budget);
     if !switched || fault == Fault::SwitchTimeout {
         return Err(Fallback::SwitchTimeout);
+    }
+    // HSI can be stopped only after hardware reports it is no longer SYSCLK.
+    io.update(Register::Cr, HSION, 0);
+    if !wait(io, Register::Cr, HSIRDY, 0, budget) {
+        return Err(Fallback::HsiStopTimeout);
     }
     Ok(Clocks::from_config(
         Source::HsePll,
@@ -364,6 +370,7 @@ mod tests {
             }
         );
         assert_eq!(init.fallback, None);
+        assert_eq!(io.cr & (HSION | HSIRDY), 0);
         assert_ne!(io.cfgr & (1 << 22), 0);
         assert_ne!(io.cr & (1 << 7), 0);
         let divided = Clocks::from_config(Source::HsePll, 72_000_000, (8 << 4) | (5 << 11));
