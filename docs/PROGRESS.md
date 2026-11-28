@@ -9,7 +9,7 @@ States: planned, in_progress, blocked, implemented (awaiting acceptance), done. 
 | ID | Milestone | Status |
 |---|---|---|
 | M0 | Bare-metal bootstrap | done |
-| M1 | Clock and logging | planned |
+| M1 | Clock and logging | in_progress |
 | M2 | Interrupts and exceptions | planned |
 | M3 | Memory management | planned |
 | M4 | Task context | planned |

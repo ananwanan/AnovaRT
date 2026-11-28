@@ -4,5 +4,9 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[features]
+confirmed-hse-8mhz = []
+confirmed-usart1 = []
+
 [target.thumbv7m-none-eabi.dependencies]
 anova-stm32f1 = { path = "../../hal/stm32f1" }

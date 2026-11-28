@@ -2,6 +2,9 @@
 #![cfg_attr(target_os = "none", no_std)]
 #![cfg_attr(target_os = "none", no_main)]
 
+#[cfg(all(target_os = "none", feature = "m1"))]
+mod m1;
+
 #[cfg(target_os = "none")]
 static mut STARTUP_DATA: u32 = 0x4d30_5254;
 #[cfg(target_os = "none")]
@@ -22,16 +25,24 @@ extern "C" fn firmware_main() -> ! {
 
     // SAFETY: This entry runs once on the Elite ME V6 with interrupts masked.
     // It is the sole owner of PB5 and the only writer to RCC/GPIOB.
-    let mut led = unsafe { anova_board::Led::init() };
-    loop {
-        led.set(true);
-        anova_cortex_m::delay_iterations(1_000_000);
-        led.set(false);
-        anova_cortex_m::delay_iterations(1_000_000);
+    let led = unsafe { anova_board::Led::init() };
+
+    #[cfg(feature = "m1")]
+    m1::run(led);
+
+    #[cfg(not(feature = "m1"))]
+    {
+        let mut led = led;
+        loop {
+            led.set(true);
+            anova_cortex_m::delay_iterations(1_000_000);
+            led.set(false);
+            anova_cortex_m::delay_iterations(1_000_000);
+        }
     }
 }
 
-#[cfg(target_os = "none")]
+#[cfg(all(target_os = "none", not(feature = "m1")))]
 #[panic_handler]
 fn panic(_: &core::panic::PanicInfo<'_>) -> ! {
     anova_cortex_m::halt()

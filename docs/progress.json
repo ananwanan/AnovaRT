@@ -28,7 +28,7 @@
       "depends_on": [
         "M0"
       ],
-      "status": "planned",
+      "status": "in_progress",
       "acceptance": "HSI/HSE/PLL, UART and panic logging; verify clock frequency, baud rate and fallback.",
       "evidence": []
     },

@@ -2,6 +2,12 @@
 m0-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware"
 m0-run = "run --locked --release --target thumbv7m-none-eabi -p anova-firmware"
 
+m1-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m1"
+m1-hse-fallback-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m1-fault-hse"
+m1-pll-fallback-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m1-fault-pll"
+m1-switch-fallback-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m1-fault-switch"
+m1-panic-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m1-panic"
+
 [target.thumbv7m-none-eabi]
 runner = [
     "probe-rs",
