@@ -12,7 +12,7 @@ States: planned, in_progress, blocked, implemented (awaiting acceptance), done. 
 | M1 | Clock and logging | done |
 | M2 | Interrupts and exceptions | done |
 | M3 | Memory management | done |
-| M4 | Task context | planned |
+| M4 | Task context | in_progress |
 | M5 | Real-time scheduling | planned |
 | M6 | Synchronization | planned |
 | M7 | IPC and timers | planned |

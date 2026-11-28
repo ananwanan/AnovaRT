@@ -97,7 +97,7 @@
       "depends_on": [
         "M3"
       ],
-      "status": "planned",
+      "status": "in_progress",
       "acceptance": "TCB, MSP/PSP and PendSV; verify register preservation and stack integrity.",
       "evidence": []
     },
