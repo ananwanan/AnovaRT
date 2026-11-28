@@ -28,16 +28,20 @@
       "depends_on": [
         "M0"
       ],
-      "status": "implemented",
+      "status": "done",
       "acceptance": "Verify HSE/PLL at 72 MHz, HSI recovery for HSE/PLL/SYSCLK startup failures, USART1 baud and echo, log filtering, panic output, DS0, reset and debugger-free cold boot.",
-      "blocker": "Normal boot, UART echo, DS0 and RESET passed. Frequency measurement, physical routing details, fallback, panic and debugger-free cold boot remain open.",
-      "partial_hardware_record": "docs/validation/M1-2026-11-28.md",
       "evidence": [
         {
           "commit": "9391f55fe3f42754b3b777bb7e337a9080b4b3d1",
           "environment": "Windows x86_64, Rust 1.100.0, thumbv7m-none-eabi release builds and host verification",
           "result": "pass",
           "artifact": "docs/validation/M1-local-2026-11-28.md"
+        },
+        {
+          "commit": "28b51b9b8156ef12d82c551e02bbd1e352402456",
+          "environment": "Elite ME V6 STM32F103ZET6, maintainer-reported hardware acceptance; commit identifies the closeout branch tip, flashed ELF not identified",
+          "result": "pass",
+          "artifact": "docs/validation/M1-2026-11-28.md"
         }
       ]
     },

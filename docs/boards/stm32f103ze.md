@@ -4,7 +4,7 @@ STM32F103ZET6, Cortex-M3, 512 KiB Flash (0x08000000), 64 KiB SRAM (0x20000000), 
 
 The maintainer reported a working ST-Link V2.1 SWD connection and a standalone LED demo using DS0 on PB5 and DS1 on PE5 in push-pull mode. The BSP drives DS0 on PB5 in 2 MHz push-pull mode with active-low polarity. It preloads the inactive latch before enabling the output. The maintainer reported that [M0 repository firmware passed hardware acceptance](../validation/M0-2026-11-28.md). BOOT0 low selects Flash boot.
 
-M1 uses the following independently confirmed configuration inputs. Both remain unverified for this physical board at the start of hardware acceptance.
+M1 uses the following operator-confirmed configuration inputs. The maintainer reported successful hardware acceptance on the tested board. [Hardware acceptance record](../validation/M1-2026-11-28.md)
 
 | Input | Firmware behavior |
 |---|---|

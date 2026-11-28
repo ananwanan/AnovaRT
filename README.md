@@ -17,7 +17,7 @@ Develop, build, flash, debug and validate only the current STM32 board. Keep por
 ## Status
 The M0 bare-metal firmware builds for the Elite ME V6 and has passed maintainer-reported [hardware acceptance](docs/validation/M0-2026-11-28.md). See the [development guide](docs/DEVELOPMENT.md) for build and flash commands.
 
-M1 clock, USART1, logging and panic diagnostics are implemented and locally verified. Board wiring, 72 MHz operation and the remaining hardware checks await [hardware acceptance](docs/TESTING.md#m1-hardware-acceptance). `cargo m1-build` defaults to HSI and leaves USART1 pins untouched until the operator confirms the board parameters.
+M1 clock, USART1, logging and panic diagnostics passed local verification and maintainer-reported [hardware acceptance](docs/validation/M1-2026-11-28.md). `cargo m1-build` defaults to HSI and leaves USART1 pins untouched until the operator confirms the board parameters.
 
 ## Documentation
 - [Roadmap](docs/ROADMAP.md)
