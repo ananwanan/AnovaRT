@@ -21,6 +21,8 @@ M1 clock, USART1, logging and panic diagnostics passed local verification and ma
 
 M2 adds Cortex-M3 interrupt control, a 1 ms SysTick timebase and terminal fault diagnostics. Build with `cargo m2-build`. The maintainer confirmed [hardware acceptance](docs/validation/M2-2026-11-28.md).
 
+M3 adds fixed-size memory pools, an optional TLSF heap and MSP stack diagnostics. `cargo m3-build` includes TLSF. `cargo m3-no-heap-build` builds the heap-free profile. Local verification is complete and board acceptance is pending. See the [memory overview](docs/memory/OVERVIEW.md).
+
 ## Documentation
 - [Roadmap](docs/ROADMAP.md)
 - [Progress](docs/PROGRESS.md)

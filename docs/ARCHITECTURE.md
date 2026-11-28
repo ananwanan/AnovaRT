@@ -20,7 +20,7 @@ M0 uses the Flash boot alias, a single core, static linking and a shared address
 
 The architecture layer owns core vectors and reset assembly. The chip layer supplies external vectors and GPIO/RCC register access. The BSP supplies the linker memory map and LED binding. The firmware owns the blink loop, which uses an uncalibrated busy wait at the reset clock. The portable kernel crate has no board dependencies.
 
-STM32 resource targets (not measurements): 512 KiB Flash and 64 KiB SRAM. Initial SRAM budget in KiB: static data 8, handler stack 4, task stacks 16, heap 12, graphics buffers 8, device buffers 4, reserve 12. Minimum kernel target: Flash <32 KiB, static RAM <4 KiB excluding application and task stacks. Use partial LCD rendering rather than a full framebuffer. Exclude file systems and GUI from M0–M7.
+STM32 resource targets (not measurements): 512 KiB Flash and 64 KiB SRAM. The [M3 SRAM budget](memory/OVERVIEW.md#sram-budget) includes dedicated 4 KiB main and emergency stacks. Minimum kernel target: Flash <32 KiB, static RAM <4 KiB excluding application and task stacks. Use partial LCD rendering rather than a full framebuffer. Exclude file systems and GUI from M0–M7.
 
 ## M1 startup and logging
 
@@ -42,6 +42,15 @@ STM32 resource targets (not measurements): 512 KiB Flash and 64 KiB SRAM. Initia
 - M3 owns memory pools and stack measurement. M4 owns task stacks, PSP and context switches. M5 owns scheduling policy and deferred switches through PendSV. M2 provides the tick and basic exception controls.
 
 References are [ST PM0056](https://www.st.com/resource/en/programming_manual/cd00228163.pdf) and [ST RM0008](https://www.st.com/resource/en/reference_manual/rm0008-stm32f103xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf).
+
+## M3 memory management
+
+- The portable kernel owns fixed-size pools, TLSF metadata and task-stack diagnostics. The board owns its SRAM mapping and exposes linked ranges. Firmware binds pool and optional heap storage once at startup.
+- The Cortex-M3 reset code paints the MSP before the first frame. The live scan samples MSP inside a stackless read loop, with configurable exceptions masked. Terminal fault handling retains access to the separate M2 emergency stack.
+- The pool serves fixed blocks by address and allocation bitmap. TLSF uses two levels of size classes, bitmaps and per-class doubly linked free lists. Physical boundary tags allow split and neighbor reclamation with bounded metadata work.
+- Firmware registers the heap only with `heap-tlsf`. The adapter reuses the M2 PRIMASK guard in Thread Mode. The optional heap and statistics have no impact on scheduling policy.
+
+See the [memory overview](memory/OVERVIEW.md) for initialization, accounting and test scope.
 
 ## Portability boundaries
 

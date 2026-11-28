@@ -139,3 +139,20 @@ These runtime checks require the STM32F103ZET6. Run `scripts/check_m2_elf.py`
 on each target profile and use LLVM objdump to inspect `m2_fault_entry` and
 the returning veneers. Keep the tested ELF SHA-256 with its serial log and
 measurement. Follow the [M2 hardware procedure](validation/M2-hardware-template.md).
+
+
+## M3 memory verification
+
+Run workspace host tests, Clippy and the STM32 release build. The memory
+tests exercise all fixed-block classes, alignment through 256 bytes,
+physical and free-list consistency, and 100,000 fixed-seed heap operations
+with payload integrity checks. Also build and inspect `m3-no-heap-build`
+and each `m3-test-*-build` profile. Build isolates are under `target/m3*`.
+`scripts/check_m3_elf.py` reuses the vector and load-segment checks from M2.
+Use `--profile legacy` for M0/M1, `m2` for M2, `no-heap` for heap-free M3,
+and `tlsf` when the global allocator is linked.
+
+The [M3 hardware procedure](validation/M3-hardware-template.md) covers
+UART and DS0, bounded on-board stress tests, DWT, reset and cold boot.
+Keep software checks, per-image SWD verification and runtime observations
+in separate evidence fields.
