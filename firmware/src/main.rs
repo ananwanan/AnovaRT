@@ -62,3 +62,6 @@ fn panic(_: &core::panic::PanicInfo<'_>) -> ! {
 fn main() {
     eprintln!("Build the firmware for thumbv7m-none-eabi with cargo m0-build.");
 }
+
+#[cfg(all(target_os = "none", feature = "m4"))]
+mod m4;

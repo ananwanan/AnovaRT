@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [features]
+m4 = ["m3", "anova-cortex-m/m4"]
 m3 = ["m2", "anova-cortex-m/m3"]
 heap-tlsf = ["m3"]
 m3-test-pool = ["m3"]
