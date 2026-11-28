@@ -5,6 +5,16 @@ edition.workspace = true
 license.workspace = true
 
 [features]
+m2 = ["m1", "anova-cortex-m/m2"]
+m2-test-nvic = ["m2"]
+m2-test-critical = ["m2"]
+m2-test-svc = ["m2"]
+m2-test-wrap = ["m2"]
+m2-fault-usage = ["m2"]
+m2-fault-bus = ["m2"]
+m2-fault-hard = ["m2"]
+m2-fault-irq = ["m2"]
+m2-fault-silent = ["m2"]
 m1 = ["dep:anova-kernel"]
 m1-fault-hse = ["m1"]
 m1-fault-pll = ["m1"]

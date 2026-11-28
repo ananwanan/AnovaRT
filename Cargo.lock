@@ -29,3 +29,6 @@ version = "0.1.0"
 [[package]]
 name = "anova-stm32f1"
 version = "0.1.0"
+dependencies = [
+ "anova-cortex-m",
+]

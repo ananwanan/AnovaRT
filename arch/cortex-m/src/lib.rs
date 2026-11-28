@@ -2,7 +2,44 @@
 #![no_std]
 
 #[cfg(target_os = "none")]
-core::arch::global_asm!(include_str!("startup.s"));
+core::arch::global_asm!(
+    include_str!("startup.s"),
+    m2 = const cfg!(feature = "m2") as u8,
+);
+
+pub mod fault;
+pub mod nvic;
+pub mod systick;
+
+#[cfg(target_os = "none")]
+pub mod interrupt;
+
+#[cfg(target_os = "none")]
+mod registers {
+    use core::ptr::{read_volatile, write_volatile};
+
+    // These helpers are private to the architecture layer. Every caller
+    // supplies an aligned, privileged System Control Space register address.
+    pub(crate) fn read(address: usize) -> u32 {
+        // SAFETY: Callers select a readable, word-aligned SCS register.
+        unsafe { read_volatile(address as *const u32) }
+    }
+
+    pub(crate) fn write(address: usize, value: u32) {
+        // SAFETY: Callers select a writable word register and valid write bits.
+        unsafe { write_volatile(address as *mut u32, value) }
+    }
+
+    pub(crate) fn read_byte(address: usize) -> u8 {
+        // SAFETY: Callers select a byte-addressable NVIC/SCB priority field.
+        unsafe { read_volatile(address as *const u8) }
+    }
+
+    pub(crate) fn write_byte(address: usize, value: u8) {
+        // SAFETY: Callers select a writable byte priority field and encoding.
+        unsafe { write_volatile(address as *mut u8, value) }
+    }
+}
 
 /// Busy-wait for a bounded number of iterations at the current core clock.
 #[cfg(target_os = "none")]

@@ -5,7 +5,7 @@
 use anova_stm32f1::gpio::{Output, Port};
 
 #[cfg(target_os = "none")]
-pub use anova_stm32f1::{rcc, usart};
+pub use anova_stm32f1::{irq, rcc, usart};
 
 pub const NAME: &str = "Three Blue Whales Elite ME V6";
 pub const MCU: &str = "STM32F103ZET6 / Cortex-M3";

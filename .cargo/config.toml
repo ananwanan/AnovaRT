@@ -8,6 +8,18 @@ m1-pll-fallback-build = "build --locked --release --target thumbv7m-none-eabi -p
 m1-switch-fallback-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m1-fault-switch"
 m1-panic-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m1-panic"
 
+m2-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2"
+m2-run = "run --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2"
+m2-test-nvic-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2-test-nvic"
+m2-test-critical-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2-test-critical"
+m2-test-svc-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2-test-svc"
+m2-test-wrap-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2-test-wrap"
+m2-fault-usage-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2-fault-usage"
+m2-fault-bus-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2-fault-bus"
+m2-fault-hard-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2-fault-hard"
+m2-fault-irq-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2-fault-irq"
+m2-fault-silent-build = "build --locked --release --target thumbv7m-none-eabi -p anova-firmware --features m2-fault-silent"
+
 [target.thumbv7m-none-eabi]
 runner = [
     "probe-rs",
